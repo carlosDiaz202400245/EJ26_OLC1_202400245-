@@ -1,0 +1,11 @@
+com\mycompany\golite\TokenReporte.class
+com\mycompany\golite\GoliteLexer.class
+com\mycompany\golite\ErrorLexico.class
+com\mycompany\golite\gui\EditorPanel.class
+com\mycompany\golite\SymUtils.class
+com\mycompany\golite\parser\parser$CUP$parser$actions.class
+com\mycompany\golite\Golite.class
+com\mycompany\golite\gui\ConsolePanel.class
+com\mycompany\golite\parser\parser.class
+com\mycompany\golite\gui\MainWindow.class
+com\mycompany\golite\parser\sym.class
