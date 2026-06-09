@@ -33,14 +33,13 @@ import java.util.List;
         return token(tipo, yytext());
     }
 
-    /** Registra un error léxico sin detener el análisis. */
     private void errorLexico() {
-        int lin = yyline + 1;
-        int col = yycolumn + 1;
-        String msg = "El símbolo \"" + yytext() + "\" no es aceptado en el lenguaje.";
-        listaErrores.add(new ErrorLexico(msg, lin, col));
-        System.err.println("[Error Léxico] Línea " + lin + ", Columna " + col + ": " + msg);
-    }
+    int lin = yyline + 1;
+    int col = yycolumn + 1;
+    String msg = "El símbolo \"" + yytext() + "\" no es aceptado en el lenguaje.";
+    listaErrores.add(new ErrorLexico(msg, lin, col));  // ← lista original intacta
+    Errores.agregarLexico(msg, lin, col);              // ← también va a Errores
+}
 %}
 
 // ─── MACROS ───────────────────────────────────────────────────────────
@@ -66,9 +65,9 @@ whitespace   = [ \r\t\f\n]+
 // COMENTARIOS E IGNORADOS
 
 // ─────────────────────────────────────────────────────────────────────
-"//" [^\r\n]*                { /* comentario de línea: ignorar */ }
-"/*" ~"*/"                   { /* comentario bloque: ignorar  */ }
-{whitespace}                 { /* espacios en blanco: ignorar */ }
+"//" [^\r\n]*               
+"/*" ~"*/"                   
+{whitespace}                 
 
 // ─────────────────────────────────────────────────────────────────────
 // FUNCIONES EMBEBIDAS

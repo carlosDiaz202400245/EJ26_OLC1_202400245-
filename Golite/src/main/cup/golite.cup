@@ -13,12 +13,10 @@ parser code {:
 
     @Override
     public void syntax_error(Symbol s) {
-        String msg = "Error sintáctico en línea " + s.left
-                   + ", columna " + s.right
-                   + ": token inesperado -> '" + s.value + "'";
-        erroresSintacticos.add(msg);
-        System.err.println(msg);
-    }
+    String msg = "Token inesperado -> '" + s.value + "'";
+    erroresSintacticos.add(msg);                          
+    Errores.agregarSintactico(msg, s.left, s.right);     
+}
 
     @Override
     public void unrecovered_syntax_error(Symbol s) throws Exception {
@@ -254,24 +252,16 @@ if_stmt
     |   IF expr bloque ELSE if_stmt
     ;
 
-/* ── Sentencia for ─────────────────────────────────────────────────────
-   Tres formas:
-     for condicion { }               <- estilo while
-     for init; cond; post { }        <- estilo clásico
-   (For sobre slices se excluye de la Fase 1)                             */
+/* ── Sentencia for ──────────────────────*/
 for_stmt
-    /* estilo while:  for expr { } */
-    ::= FOR expr bloque
-
-    /* estilo clásico: for init ; cond ; post { } */
-    |   FOR for_init SEMICOLON expr SEMICOLON for_post bloque
+    ::= FOR for_init SEMICOLON expr SEMICOLON for_post bloque
     ;
 
 /* Inicialización del for: puede ser var_decl o asignación */
 for_init
     ::= var_decl
     |   asignacion
-    |   /* vacío */
+    |   
     ;
 
 /* Post-paso del for: i++  i--  o asignación */
@@ -321,8 +311,7 @@ expr_list_ne
     ;
 
 /* ── Expresiones ───────────────────────────────────────────────────────
-   Se usan las declaraciones de precedencia de arriba para resolver
-   ambigüedades sin necesidad de gramáticas completamente desambiguadas.  */
+    */
 expr
     /* Operaciones aritméticas */
     ::= expr PLUS   expr

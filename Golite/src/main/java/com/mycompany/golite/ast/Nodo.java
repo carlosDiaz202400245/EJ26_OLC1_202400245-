@@ -30,7 +30,7 @@ public abstract class Nodo {
      * @param entorno el entorno de ejecución actual 
      * @return el valor resultado de evaluar este nodo, o null si no retorna nada
      */
-    // aun no lo creo public abstract Object ejecutar(com.mycompany.golite.Entorno entorno);
+    public abstract Object ejecutar(com.mycompany.golite.Entorno entorno);
 
     /**
      * Representación en texto del nodo, útil para depuración.
