@@ -4,8 +4,7 @@ package com.mycompany.golite.ast;
  * Nodo que representa la función embebida strconv.ParseFloat.
  *
  * Convierte una cadena que representa un número decimal o entero
- * en un valor de tipo float64.
- * Si la cadena no es válida = error semantico.
+ * en un valor de tipo float
  
  */
 public class NodoParseFloat extends Nodo {

@@ -3,15 +3,10 @@ package com.mycompany.golite;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Maneja los scoups de variables durante la ejecución.
- */
+/** Maneja los scopes de variables durante la ejecución. */
 public class Entorno {
 
-    // ─────────────────────────────────────────────────────────────────
-    // SEÑALES DE CONTROL DE FLUJO
-
-    // ─────────────────────────────────────────────────────────────────
+    // ─── SEÑALES DE CONTROL DE FLUJO ───────────────────────────────────
 
     /** Clase base de todas las señales */
     public static abstract class Senal {}
@@ -28,9 +23,7 @@ public class Entorno {
         public ReturnSignal(Object valor) { this.valor = valor; }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // ESTRUCTURA DE VARIABLE
-    // ─────────────────────────────────────────────────────────────────
+    // ─── ESTRUCTURA DE VARIABLE ────────────────────────────────────────
 
     private static class Variable {
         String tipo;
@@ -42,19 +35,15 @@ public class Entorno {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // CAMPOS DEL ENTORNO
-    // ─────────────────────────────────────────────────────────────────
+    // ─── CAMPOS DEL ENTORNO ────────────────────────────────────────────
 
-    /** Tabla de variables en este scope */
+    /** Tabla de variables de este scope */
     private final Map<String, Variable> tabla = new HashMap<>();
 
-    /** Entorno padre si es global null */
+    /** Entorno padre (null si es el global) */
     private final Entorno padre;
 
-    // ─────────────────────────────────────────────────────────────────
-    // CONSTRUCTORES
-    // ─────────────────────────────────────────────────────────────────
+    // ─── CONSTRUCTORES ─────────────────────────────────────────────────
 
     /** Constructor para el scope global */
     public Entorno() {
@@ -66,32 +55,16 @@ public class Entorno {
         this.padre = padre;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // DECLARAR VARIABLE
-    // Solo se declara en el scope actual
-    // ─────────────────────────────────────────────────────────────────
+    // ─── DECLARAR VARIABLE ─────────────────────────────────────────────
 
-    /**
-     * Declara una nueva variable en el scope actual.
-     * @param nombre nombre de la variable
-     * @param tipo   tipo de la variable
-     * @param valor  valor inicial
-     */
+    /** Declara una variable nueva en el scope actual. */
     public void declarar(String nombre, String tipo, Object valor) {
         tabla.put(nombre, new Variable(tipo, valor));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // ASIGNAR VARIABLE
-    // Busca la variable en el scope actual y papas si hay
-    // ─────────────────────────────────────────────────────────────────
+    // ─── ASIGNAR VARIABLE ──────────────────────────────────────────────
 
-    /**
-     * Asigna un nuevo valor a una variable ya declarada.
-     * Busca en el scope actual y sube hasta el global.
-     * @param nombre nombre de la variable
-     * @param valor  nuevo valor
-     */
+    /** Asigna valor a una variable ya declarada; busca desde el scope actual hasta el global. */
     public void asignar(String nombre, Object valor) {
         if (tabla.containsKey(nombre)) {
             tabla.get(nombre).valor = valor;
@@ -104,16 +77,9 @@ public class Entorno {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // OBTENER VALOR
-    // ─────────────────────────────────────────────────────────────────
+    // ─── OBTENER VALOR ─────────────────────────────────────────────────
 
-    /**
-     * Obtiene el valor de una variable.
-     * Busca en el scope actual y sube hasta el global.
-     * @param nombre nombre de la variable
-     * @return valor de la variable
-     */
+    /** Obtiene el valor de una variable, buscando desde el scoup actual hasta el global. */
     public Object obtener(String nombre) {
         if (tabla.containsKey(nombre)) {
             return tabla.get(nombre).valor;
@@ -126,16 +92,9 @@ public class Entorno {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // OBTENER TIPO
-    // ─────────────────────────────────────────────────────────────────
+    // ─── OBTENER TIPO ──────────────────────────────────────────────────
 
-    /**
-     * Obtiene el tipo declarado de una variable.
-     * Busca en el scope actual y sube hasta el global.
-     * @param nombre nombre de la variable
-     * @return tipo de la variable como String
-     */
+    /** Obtiene el tipo declarado de una variable, buscando hasta el scope global. */
     public String obtenerTipo(String nombre) {
         if (tabla.containsKey(nombre)) {
             return tabla.get(nombre).tipo;
@@ -148,39 +107,23 @@ public class Entorno {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // VERIFICAR EXISTENCIA
-    // ─────────────────────────────────────────────────────────────────
+    // ─── VERIFICAR EXISTENCIA ──────────────────────────────────────────
 
-    /**
-     * Verifica si una variable existe en CUALQUIER scope (actual o padres).
-     * Se usa para validar acceso a variables.
-     * @param nombre nombre de la variable
-     * @return true si existe en algún scope
-     */
+    /** true si la variable existe en cualquier scope (actual o padres). */
     public boolean existe(String nombre) {
         if (tabla.containsKey(nombre)) return true;
         if (padre != null) return padre.existe(nombre);
         return false;
     }
 
-    /**
-     * Verifica si una variable existe SOLO en el scope actual.
-     * Se usa para evitar redeclaración en el mismo ámbito.
-     * @param nombre nombre de la variable
-     * @return true si existe en el scope actual
-     */
+    /** true si la variable existe solo en el scope actual; evita redeclaración. */
     public boolean existeEnScopeActual(String nombre) {
         return tabla.containsKey(nombre);
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // UTILIDAD
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDAD ──────────────────────────────────────────────────────
 
-    /**
-     * Muestra el contenido del scope actual
-     */
+    /** Muestra el contenido del scoup actual. */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("Entorno{\n");

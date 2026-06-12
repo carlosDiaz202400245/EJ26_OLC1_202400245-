@@ -1,31 +1,21 @@
 package com.mycompany.golite.ast;
 
-/**
- Nodo que representa una operación unaria.
- */
+/** Nodo que representa una operación unaria. */
 public class NodoUnario extends Nodo {
 
-    /** Operador:- para negación aritmetica, ! para negacion logica */
+    /** Operador: "-" negación aritmetica, "!" negación lógica. */
     public String operador;
 
-    /** Expresión sobre la que se aplica el operador */
+    /** Expresión sobre la que se aplica el operador. */
     public Nodo expresion;
 
-    /**
-     * @param operador  - o !
-     * @param expresion nodo de la expresión a negar
-     * @param linea     línea en el código fuente
-     * @param columna   columna en el código fuente
-     */
     public NodoUnario(String operador, Nodo expresion, int linea, int columna) {
         super(linea, columna);
         this.operador  = operador;
         this.expresion = expresion;
     }
 
-    /**
-     * Evalúa la expresión y aplica el operador unario.
-     */
+    /** Evalúa la expresión y aplica el operador unario. */
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
         Object valor = expresion.ejecutar(entorno);
@@ -48,9 +38,7 @@ public class NodoUnario extends Nodo {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // negacion aritmetica 
-    // ─────────────────────────────────────────────────────────────────
+    // ─── NEGACIÓN ARITMÉTICA ───────────────────────────────────────────
     private Object negarAritmetico(Object valor) {
         if (valor instanceof Integer) {
             return -(Integer) valor;
@@ -65,9 +53,7 @@ public class NodoUnario extends Nodo {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // negacion logica
-    // ─────────────────────────────────────────────────────────────────
+    // ─── NEGACIÓN LÓGICA ───────────────────────────────────────────────
     private Object negarLogico(Object valor) {
         if (valor instanceof Boolean) {
             return !(Boolean) valor;
@@ -79,9 +65,7 @@ public class NodoUnario extends Nodo {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // utilidad
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDAD ──────────────────────────────────────────────────────
     private String nombreTipo(Object v) {
         if (v instanceof Integer) return "int";
         if (v instanceof Double)  return "float64";

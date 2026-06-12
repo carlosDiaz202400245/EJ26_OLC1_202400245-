@@ -2,35 +2,16 @@ package com.mycompany.golite.ast;
 
 /**
  * Nodo que representa la declaración de una variable.
- *
- * Valores por defecto según el enunciado
- *   int     = 0
- *   float64 = 0.0
- *   string  = ""
- *   bool    = false
- *   rune    = 0
- *   otros   = nil que es null va
+ * Valores por defecto: int=0, float64=0.0, string="", bool=false, rune=0, otros=nil.
  */
 public class NodoDeclVar extends Nodo {
 
-    /** Nombre de la variable */
     public String nombre;
-
     public String tipo;
 
-    /**
-     * Expresión con el valor inicial.
-     * null si no se asigna valor 
-     */
+    /** Expresión del valor inicial; null si no se asigna. */
     public Nodo expresion;
 
-    /**
-     * @param nombre     nombre de la variable
-     * @param tipo       tipo explícito o null si se infiere
-     * @param expresion  expresión del valor inicial o null si no hay
-     * @param linea      línea en el código fuente
-     * @param columna    columna en el código fuente
-     */
     public NodoDeclVar(String nombre, String tipo, Nodo expresion,
                        int linea, int columna) {
         super(linea, columna);
@@ -42,7 +23,7 @@ public class NodoDeclVar extends Nodo {
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
 
-        // Verificar que la variable no exista en el scope actual osea el alcanse 
+        // No permitir redeclaración en el mismo scope
         if (entorno.existeEnScopeActual(nombre)) {
             throw new RuntimeException(
                 "[Error Semántico] Línea " + linea + ", Columna " + columna
@@ -53,32 +34,22 @@ public class NodoDeclVar extends Nodo {
         Object valor;
 
         if (expresion != null) {
-            // Evaluar la expresión para obtener el valor
             valor = expresion.ejecutar(entorno);
-
-            // Si hay tipo explícito, verificar compatibilidad
+            // Con tipo explícito se valida; sin él se infiere del valor
             if (tipo != null) {
                 valor = verificarYConvertir(valor);
-            }
-            // Si no hay tipo explícito, inferir del valor obtenido
-            // y guardar el tipo inferido
-            else {
+            } else {
                 tipo = inferirTipo(valor);
             }
         } else {
-            // Sin expresión → tomar el valor por defecto del tipo
-            valor = valorPorDefecto();
+            valor = valorPorDefecto();   // sin expresión → valor por defecto
         }
 
-        // Registrar la variable en el entorno con su tipo y valor
         entorno.declarar(nombre, tipo, valor);
-
-        return null; // Las declaraciones no retornan valor
+        return null;   // las declaraciones no retornan valor
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // mirar compativilidad
-    // ─────────────────────────────────────────────────────────────────
+    // ─── VERIFICAR COMPATIBILIDAD DE TIPOS ─────────────────────────────
     private Object verificarYConvertir(Object valor) {
         switch (tipo) {
             case "int":
@@ -130,9 +101,7 @@ public class NodoDeclVar extends Nodo {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // inferir el valor
-    // ─────────────────────────────────────────────────────────────────
+    // ─── INFERIR TIPO DEL VALOR ────────────────────────────────────────
     private String inferirTipo(Object valor) {
         if (valor instanceof Integer) return "int";
         if (valor instanceof Double)  return "float64";
@@ -142,9 +111,7 @@ public class NodoDeclVar extends Nodo {
         return valor.getClass().getSimpleName();
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // valor por defecto segun el tipo declarado
-    // ─────────────────────────────────────────────────────────────────
+    // ─── VALOR POR DEFECTO SEGÚN EL TIPO ───────────────────────────────
     private Object valorPorDefecto() {
         if (tipo == null) {
             throw new RuntimeException(
@@ -163,9 +130,7 @@ public class NodoDeclVar extends Nodo {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // utilidad
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDAD ──────────────────────────────────────────────────────
     private String nombreTipo(Object v) {
         if (v instanceof Integer) return "int";
         if (v instanceof Double)  return "float64";

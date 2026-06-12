@@ -8,119 +8,115 @@ package com.mycompany.golite.parser;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int DIVIDE = 35;
-  public static final int RUNE_LITERAL = 20;
-  public static final int STRING_LITERAL = 19;
-  public static final int LBRACKET = 51;
-  public static final int BOOL_TYPE = 14;
-  public static final int GE = 43;
-  public static final int UMINUS = 37;
-  public static final int PLUS_ASSIGN = 28;
-  public static final int LPAREN = 47;
-  public static final int CONTINUE = 8;
-  public static final int PRINTLN = 22;
-  public static final int FOR = 6;
-  public static final int MINUS = 33;
-  public static final int RPAREN = 48;
-  public static final int DEFINE = 27;
-  public static final int SEMICOLON = 54;
-  public static final int NOT = 46;
-  public static final int AND = 44;
-  public static final int LT = 40;
-  public static final int PARSEFLOAT = 24;
-  public static final int TYPEOF = 25;
-  public static final int NIL = 10;
-  public static final int OR = 45;
-  public static final int COMMA = 53;
-  public static final int INC = 30;
-  public static final int ATOI = 23;
-  public static final int PLUS = 32;
-  public static final int ASSIGN = 26;
-  public static final int IF = 4;
-  public static final int DOT = 55;
-  public static final int LE = 41;
+  public static final int PAR_DER = 48;
+  public static final int Y = 44;
+  public static final int LITERAL_ENTERO = 17;
+  public static final int ASIGNAR = 26;
+  public static final int LITERAL_FLOTANTE = 18;
+  public static final int POR = 34;
+  public static final int IMPRIMIR = 22;
+  public static final int SI = 4;
+  public static final int TIPO_RUNA = 15;
+  public static final int FUNCION = 3;
+  public static final int LITERAL_RUNA = 20;
+  public static final int O = 45;
+  public static final int DIFERENTE = 39;
+  public static final int MENOS_UNARIO = 37;
+  public static final int LLAVE_IZQ = 49;
+  public static final int IDENTIFICADOR = 21;
+  public static final int IGUAL = 38;
+  public static final int SINO = 5;
+  public static final int CONTINUAR = 8;
+  public static final int INCREMENTO = 30;
+  public static final int PUNTO_COMA = 52;
+  public static final int A_ENTERO = 23;
+  public static final int MENOS_ASIGNAR = 29;
+  public static final int LITERAL_CADENA = 19;
+  public static final int TIPO_DE = 25;
   public static final int EOF = 0;
-  public static final int RETURN = 9;
-  public static final int RBRACKET = 52;
-  public static final int STRING_TYPE = 13;
+  public static final int TIPO_ENTERO = 11;
+  public static final int DECREMENTO = 31;
   public static final int error = 1;
-  public static final int MOD = 36;
-  public static final int INT_TYPE = 11;
-  public static final int BREAK = 7;
-  public static final int EQ = 38;
-  public static final int TIMES = 34;
-  public static final int LBRACE = 49;
-  public static final int ELSE = 5;
-  public static final int FUNC = 3;
-  public static final int RUNE_TYPE = 15;
-  public static final int RBRACE = 50;
-  public static final int NE = 39;
-  public static final int DEC = 31;
-  public static final int FLOAT_LITERAL = 18;
-  public static final int GT = 42;
-  public static final int FLOAT_TYPE = 12;
-  public static final int VAR = 2;
-  public static final int MINUS_ASSIGN = 29;
-  public static final int BOOL_LITERAL = 16;
-  public static final int INT_LITERAL = 17;
-  public static final int IDENTIFIER = 21;
+  public static final int COMA = 51;
+  public static final int NULO = 10;
+  public static final int MODULO = 36;
+  public static final int MENOS = 33;
+  public static final int MENOR = 40;
+  public static final int PAR_IZQ = 47;
+  public static final int MAYOR = 42;
+  public static final int ROMPER = 7;
+  public static final int NO = 46;
+  public static final int PUNTO = 53;
+  public static final int LLAVE_DER = 50;
+  public static final int VARIABLE = 2;
+  public static final int MAYOR_IGUAL = 43;
+  public static final int PARA = 6;
+  public static final int RETORNAR = 9;
+  public static final int DEFINIR = 27;
+  public static final int TIPO_BOOLEANO = 14;
+  public static final int MENOR_IGUAL = 41;
+  public static final int TIPO_CADENA = 13;
+  public static final int ENTRE = 35;
+  public static final int A_FLOTANTE = 24;
+  public static final int LITERAL_BOOLEANO = 16;
+  public static final int MAS_ASIGNAR = 28;
+  public static final int MAS = 32;
+  public static final int TIPO_FLOTANTE = 12;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
-  "VAR",
-  "FUNC",
-  "IF",
-  "ELSE",
-  "FOR",
-  "BREAK",
-  "CONTINUE",
-  "RETURN",
-  "NIL",
-  "INT_TYPE",
-  "FLOAT_TYPE",
-  "STRING_TYPE",
-  "BOOL_TYPE",
-  "RUNE_TYPE",
-  "BOOL_LITERAL",
-  "INT_LITERAL",
-  "FLOAT_LITERAL",
-  "STRING_LITERAL",
-  "RUNE_LITERAL",
-  "IDENTIFIER",
-  "PRINTLN",
-  "ATOI",
-  "PARSEFLOAT",
-  "TYPEOF",
-  "ASSIGN",
-  "DEFINE",
-  "PLUS_ASSIGN",
-  "MINUS_ASSIGN",
-  "INC",
-  "DEC",
-  "PLUS",
-  "MINUS",
-  "TIMES",
-  "DIVIDE",
-  "MOD",
-  "UMINUS",
-  "EQ",
-  "NE",
-  "LT",
-  "LE",
-  "GT",
-  "GE",
-  "AND",
-  "OR",
-  "NOT",
-  "LPAREN",
-  "RPAREN",
-  "LBRACE",
-  "RBRACE",
-  "LBRACKET",
-  "RBRACKET",
-  "COMMA",
-  "SEMICOLON",
-  "DOT"
+  "VARIABLE",
+  "FUNCION",
+  "SI",
+  "SINO",
+  "PARA",
+  "ROMPER",
+  "CONTINUAR",
+  "RETORNAR",
+  "NULO",
+  "TIPO_ENTERO",
+  "TIPO_FLOTANTE",
+  "TIPO_CADENA",
+  "TIPO_BOOLEANO",
+  "TIPO_RUNA",
+  "LITERAL_BOOLEANO",
+  "LITERAL_ENTERO",
+  "LITERAL_FLOTANTE",
+  "LITERAL_CADENA",
+  "LITERAL_RUNA",
+  "IDENTIFICADOR",
+  "IMPRIMIR",
+  "A_ENTERO",
+  "A_FLOTANTE",
+  "TIPO_DE",
+  "ASIGNAR",
+  "DEFINIR",
+  "MAS_ASIGNAR",
+  "MENOS_ASIGNAR",
+  "INCREMENTO",
+  "DECREMENTO",
+  "MAS",
+  "MENOS",
+  "POR",
+  "ENTRE",
+  "MODULO",
+  "MENOS_UNARIO",
+  "IGUAL",
+  "DIFERENTE",
+  "MENOR",
+  "MENOR_IGUAL",
+  "MAYOR",
+  "MAYOR_IGUAL",
+  "Y",
+  "O",
+  "NO",
+  "PAR_IZQ",
+  "PAR_DER",
+  "LLAVE_IZQ",
+  "LLAVE_DER",
+  "COMA",
+  "PUNTO_COMA",
+  "PUNTO"
   };
 }
 

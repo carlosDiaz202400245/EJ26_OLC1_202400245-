@@ -1,360 +1,316 @@
 package com.mycompany.golite.parser;
 
 import java_cup.runtime.*;
+import com.mycompany.golite.Errores;
+import com.mycompany.golite.ErrorSintactico;
+import com.mycompany.golite.ast.*;
+import java.util.ArrayList;
 
-/* ═══════════════════════════════════════════════════════════════════════
-   CÓDIGO DEL PARSER
-   ═══════════════════════════════════════════════════════════════════════ */
 parser code {:
-    /* Lista de errores sintácticos para el reporte */
-     public int getExpectedConflicts() { return 5; }
-
-    public static java.util.List<String> erroresSintacticos = new java.util.ArrayList<>();
+    public static java.util.ArrayList<ErrorSintactico> erroresSintacticos = new java.util.ArrayList<>();
 
     @Override
     public void syntax_error(Symbol s) {
-    String msg = "Token inesperado -> '" + s.value + "'";
-    erroresSintacticos.add(msg);                          
-    Errores.agregarSintactico(msg, s.left, s.right);     
-}
+        String msg = "Token inesperado -> '" + s.value + "'";
+        ErrorSintactico err = new ErrorSintactico(msg, s.left, s.right);
+        erroresSintacticos.add(err);
+        Errores.agregarSintactico(msg, s.left, s.right);
+    }
 
     @Override
     public void unrecovered_syntax_error(Symbol s) throws Exception {
-        String msg = "Error sintáctico irrecuperable en línea " + s.left
-                   + ", columna " + s.right
-                   + ": '" + s.value + "'";
-        erroresSintacticos.add(msg);
-        System.err.println(msg);
+        String msg = "Error irrecuperable -> '" + s.value + "'";
+        ErrorSintactico err = new ErrorSintactico(msg, s.left, s.right);
+        erroresSintacticos.add(err);
+        Errores.agregarSintactico(msg, s.left, s.right);
     }
 :}
 
-/* ═══════════════════════════════════════════════════════════════════════
-   TERMINALES
-   ═══════════════════════════════════════════════════════════════════════ */
+/* ── TERMINALES ─────────────────────────────────────────────────────── */
+terminal            VARIABLE, FUNCION, SI, SINO, PARA, ROMPER, CONTINUAR, RETORNAR, NULO;
+terminal            TIPO_ENTERO, TIPO_FLOTANTE, TIPO_CADENA, TIPO_BOOLEANO, TIPO_RUNA;
+terminal            LITERAL_BOOLEANO;
+terminal Integer    LITERAL_ENTERO;
+terminal Double     LITERAL_FLOTANTE;
+terminal String     LITERAL_CADENA;
+terminal            LITERAL_RUNA;
+terminal String     IDENTIFICADOR;
+terminal            IMPRIMIR, A_ENTERO, A_FLOTANTE, TIPO_DE;
+terminal            ASIGNAR, DEFINIR, MAS_ASIGNAR, MENOS_ASIGNAR;
+terminal            INCREMENTO, DECREMENTO;
+terminal            MAS, MENOS, POR, ENTRE, MODULO, MENOS_UNARIO;
+terminal            IGUAL, DIFERENTE, MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL;
+terminal            Y, O, NO;
+terminal            PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER;
+terminal            COMA, PUNTO_COMA, PUNTO;
 
-/* Palabras reservadas */
-terminal            VAR, FUNC, IF, ELSE, FOR, BREAK, CONTINUE, RETURN, NIL;
+/* ── NO TERMINALES (sin genéricos) ──────────────────────────────────── */
+non terminal ArrayList   program;
+non terminal ArrayList   decl_list;
+non terminal Nodo        decl;
+non terminal Nodo        func_decl;
+non terminal ArrayList   param_list;
+non terminal ArrayList   param_list_ne;
+non terminal Nodo        param;
+non terminal String      tipo;
+non terminal NodoBloque  bloque;
+non terminal ArrayList   stmt_list;
+non terminal Nodo        stmt;
+non terminal Nodo        var_decl;
+non terminal Nodo        asignacion;
+non terminal Nodo        if_stmt;
+non terminal Nodo        for_stmt;
+non terminal Nodo        for_init;
+non terminal Nodo        for_post;
+non terminal Nodo        llamada_funcion;
+non terminal ArrayList   arg_list;
+non terminal ArrayList   arg_list_ne;
+non terminal Nodo        llamada_embebida;
+non terminal Nodo        expr;
+non terminal ArrayList   expr_list;
+non terminal ArrayList   expr_list_ne;
 
-/* Tipos de datos */
-terminal            INT_TYPE, FLOAT_TYPE, STRING_TYPE, BOOL_TYPE, RUNE_TYPE;
+/* ── PRECEDENCIA ────────────────────────────────────────────────────── */
 
-/* Literales */
-terminal            BOOL_LITERAL;
-terminal Integer    INT_LITERAL;
-terminal Double     FLOAT_LITERAL;
-terminal String     STRING_LITERAL;
-terminal            RUNE_LITERAL;
-
-/* Identificador */
-terminal String     IDENTIFIER;
-
-/* Funciones embebidas */
-terminal            PRINTLN, ATOI, PARSEFLOAT, TYPEOF;
-
-/* Operadores de asignación */
-terminal            ASSIGN;          /* =  */
-terminal            DEFINE;          /* := */
-terminal            PLUS_ASSIGN;     /* += */
-terminal            MINUS_ASSIGN;    /* -= */
-
-/* Incremento / Decremento */
-terminal            INC;             /* ++ */
-terminal            DEC;             /* -- */
-
-/* Operadores aritméticos */
-terminal            PLUS, MINUS, TIMES, DIVIDE, MOD, UMINUS;
-
-/* Operadores de comparación */
-terminal            EQ, NE, LT, LE, GT, GE;
-
-/* Operadores lógicos */
-terminal            AND, OR, NOT;
-
-/* Delimitadores */
-terminal            LPAREN, RPAREN;          /* ( ) */
-terminal            LBRACE, RBRACE;          /* { } */
-terminal            LBRACKET, RBRACKET;      /* [ ] */
-terminal            COMMA, SEMICOLON, DOT;   /* , ; . */
-
-/* ═══════════════════════════════════════════════════════════════════════
-   NO TERMINALES
-   ═══════════════════════════════════════════════════════════════════════ */
-non terminal        program;
-non terminal        decl_list;        /* lista de declaraciones globales  */
-non terminal        decl;             /* una declaración global           */
-non terminal        func_decl;        /* declaración de función           */
-non terminal        param_list;       /* lista de parámetros              */
-non terminal        param_list_ne;    /* lista de parámetros no vacía     */
-non terminal        param;            /* un parámetro                     */
-non terminal        tipo;             /* tipo de dato                     */
-non terminal        bloque;           /* bloque             */
-non terminal        stmt_list;        /* lista de sentencias              */
-non terminal        stmt;             /* una sentencia                    */
-non terminal        var_decl;         /* declaración de variable          */
-non terminal        asignacion;       /* asignación simple o compuesta    */
-non terminal        if_stmt;          /* sentencia if / if-else           */
-non terminal        for_stmt;         /* sentencia for                    */
-non terminal        for_init;         /* inicialización del for           */
-non terminal        for_post;         /* post-paso del for                */
-non terminal        llamada_funcion;  /* llamada a función                */
-non terminal        arg_list;         /* lista de argumentos              */
-non terminal        arg_list_ne;      /* lista de argumentos no vacía     */
-non terminal        llamada_embebida; /* fmt.Println, strconv.*, reflect.**/
-non terminal        expr;             /* expresión                        */
-non terminal        expr_list;        /* lista de expresiones    */
-non terminal        expr_list_ne;     /* lista de expresiones no vacía    */
-
-/* ═══════════════════════════════════════════════════════════════════════
-   PRECEDENCIA Y ASOCIATIVIDAD
-   mas prioridad la ultima linea segun el aux
-   ═══════════════════════════════════════════════════════════════════════ */
-precedence right    ASSIGN, PLUS_ASSIGN, MINUS_ASSIGN;
-precedence left     OR;
-precedence left     AND;
-precedence left     EQ, NE;
-precedence left     LT, LE, GT, GE;
-precedence left     PLUS, MINUS;
-precedence left     TIMES, DIVIDE, MOD;
-precedence right    UMINUS;
-precedence right    NOT;     /* UMINUS: la negacion unarie xd       */
-precedence left     LPAREN, LBRACKET; /* llamadas / indicex              */
-
-/* ═══════════════════════════════════════════════════════════════════════
-   PUNTO DE INICIO
-   ═══════════════════════════════════════════════════════════════════════ */
+precedence right    ASIGNAR, MAS_ASIGNAR, MENOS_ASIGNAR;
+precedence left     O;
+precedence left     Y;
+precedence left     IGUAL, DIFERENTE;
+precedence left     MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL;
+precedence left     MAS, MENOS;
+precedence left     POR, ENTRE, MODULO;
+precedence right    MENOS_UNARIO;
+precedence right    NO;
+precedence left     PAR_IZQ;
 
 start with program;
 
-/* ═══════════════════════════════════════════════════════════════════════
-   REGLAS GRAMATICALES
-   ═══════════════════════════════════════════════════════════════════════ */
+/* ── REGLAS ─────────────────────────────────────────────────────────── */
 
-/* ── Programa ──────────────────────────────────────────────────────────
-       */
 program
-    ::= decl_list
+    ::= decl_list:dl
+        {: RESULT = dl; :}
     ;
 
 decl_list
-    ::= decl_list decl
+    ::= decl_list:dl decl:d
+        {: if (d != null) dl.add(d); RESULT = dl; :}
     |   /* vacío */
+        {: RESULT = new ArrayList(); :}
     ;
 
 decl
-    ::= func_decl
-    |   var_decl
+    ::= func_decl:f  {: RESULT = f; :}
+    |   stmt:s       {: RESULT = s; :}
     ;
 
-/* ── Tipos de dato ──────────────────────────────────────────────────── */
+/* ── Tipos ──────────────────────────────────────────────────────────── */
 tipo
-    ::= INT_TYPE
-    |   FLOAT_TYPE
-    |   STRING_TYPE
-    |   BOOL_TYPE
-    |   RUNE_TYPE
-    |   IDENTIFIER       
+    ::= TIPO_ENTERO        {: RESULT = "int";     :}
+    |   TIPO_FLOTANTE      {: RESULT = "float64"; :}
+    |   TIPO_CADENA     {: RESULT = "string";  :}
+    |   TIPO_BOOLEANO       {: RESULT = "bool";    :}
+    |   TIPO_RUNA       {: RESULT = "rune";    :}
+    |   IDENTIFICADOR:id   {: RESULT = id;        :}
     ;
 
-/* ── Declaración de función ────────────────────────────────────────────
-   Sintaxis:
-     func nombre ( params ) { cuerpo }          <- sin retorno
-     func nombre ( params ) tipo { cuerpo }     <- con retorno             */
+/* ── Funciones ──────────────────────────────────────────────────────── */
 func_decl
-    ::= FUNC IDENTIFIER LPAREN param_list RPAREN bloque
-    |   FUNC IDENTIFIER LPAREN param_list RPAREN tipo bloque
+    ::= FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER bloque:b
+        {: RESULT = null; :}   // Fase 1: se reconoce la sintaxis pero NO se interpreta (las funciones son fase 2)
+    |   FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER tipo:t bloque:b
+        {: RESULT = null; :}   // Fase 1: idem, función con tipo de retorno
     ;
 
-/* ── Parámetros ────────────────────────────────────────────────────── */
 param_list
-    ::= param_list_ne
-    |   /* vacío */
+    ::= param_list_ne:pl  {: RESULT = pl; :}
+    |   /* vacío */       {: RESULT = new ArrayList(); :}
     ;
 
 param_list_ne
-    ::= param_list_ne COMMA param
-    |   param
+    ::= param_list_ne:pl COMA param:p
+        {: pl.add(p); RESULT = pl; :}
+    |   param:p
+        {: ArrayList l = new ArrayList(); l.add(p); RESULT = l; :}
     ;
 
 param
-    ::= IDENTIFIER tipo
+    ::= IDENTIFICADOR:id tipo:t
+        {: RESULT = new NodoDeclVar(id, t, null, idleft, idright); :}
     ;
 
-/* ── Bloque de sentencias ──────────────────────────────────────────── */
+/* ── Bloque ─────────────────────────────────────────────────────────── */
 bloque
-    ::= LBRACE stmt_list RBRACE
+    ::= LLAVE_IZQ:l stmt_list:sl LLAVE_DER
+        {: RESULT = new NodoBloque(sl, lleft, lright); :}
     ;
 
-/* ── Lista de sentencias ───────────────────────────────────────────── */
+/* ── Lista de sentencias ────────────────────────────────────────────── */
 stmt_list
-    ::= stmt_list stmt
+    ::= stmt_list:sl stmt:s
+        {: if (s != null) sl.add(s); RESULT = sl; :}
     |   /* vacío */
+        {: RESULT = new ArrayList(); :}
     ;
 
-/* ── Sentencias ────────────────────────────────────────────────────────
-   Todas las sentencias que deben soportarse en la Fase 1.               */
+/* ── Sentencias ─────────────────────────────────────────────────────── */
 stmt
-    /* Bloque independiente dentro de función */
-    ::= bloque
-
-    /* Declaraciones de variable */
-    |   var_decl
-
-    /* Asignaciones simples y compuestas */
-    |   asignacion
-
-    /* Incremento / Decremento como sentencia (i++  i--) */
-    |   IDENTIFIER INC
-    |   IDENTIFIER DEC
-
-    /* Llamada a función como sentencia */
-    |   llamada_funcion
-    |   llamada_embebida
-
-    /* Sentencias de control de flujo */
-    |   if_stmt
-    |   for_stmt
-
-    /* Sentencias de transferencia */
-    |   BREAK
-    |   CONTINUE
-    |   RETURN expr
-
-    /* Sentencia vacía (punto y coma solo) */
-    |   SEMICOLON
+    ::= bloque:b
+        {: RESULT = b; :}
+    |   var_decl:v
+        {: RESULT = v; :}
+    |   asignacion:a
+        {: RESULT = a; :}
+    |   IDENTIFICADOR:id INCREMENTO
+        {: RESULT = new NodoIncDec(id, "++", idleft, idright); :}
+    |   IDENTIFICADOR:id DECREMENTO
+        {: RESULT = new NodoIncDec(id, "--", idleft, idright); :}
+    |   llamada_funcion:lf
+        {: RESULT = lf; :}
+    |   llamada_embebida:le
+        {: RESULT = le; :}
+    |   if_stmt:i
+        {: RESULT = i; :}
+    |   for_stmt:f
+        {: RESULT = f; :}
+    |   ROMPER:b
+        {: RESULT = new NodoBreak(bleft, bright); :}
+    |   CONTINUAR:c
+        {: RESULT = new NodoContinue(cleft, cright); :}
+    |   RETORNAR:r expr:e
+        {: RESULT = null; :}
+    |   PUNTO_COMA
+        {: RESULT = null; :}
     ;
 
-/* ── Declaración de variable ───────────────────────────────────────────
-   Tres formas:
-     var id tipo
-     var id tipo = expr
-     id := expr                                                            */
+/* ── Variables ──────────────────────────────────────────────────────── */
 var_decl
-    ::= VAR IDENTIFIER tipo
-    |   VAR IDENTIFIER tipo ASSIGN expr
-    |   VAR IDENTIFIER ASSIGN expr        /* var a = expr  (infiere tipo) */
-    |   IDENTIFIER DEFINE expr            /* id := expr                   */
+    ::= VARIABLE IDENTIFICADOR:id tipo:t
+        {: RESULT = new NodoDeclVar(id, t, null, idleft, idright); :}
+    |   VARIABLE IDENTIFICADOR:id tipo:t ASIGNAR expr:e
+        {: RESULT = new NodoDeclVar(id, t, e, idleft, idright); :}
+    |   VARIABLE IDENTIFICADOR:id ASIGNAR expr:e
+        {: RESULT = new NodoDeclVar(id, null, e, idleft, idright); :}
+    |   IDENTIFICADOR:id DEFINIR expr:e
+        {: RESULT = new NodoDeclVar(id, null, e, idleft, idright); :}
     ;
 
-/* ── Asignación ────────────────────────────────────────────────────── */
+/* ── Asignación ─────────────────────────────────────────────────────── */
 asignacion
-    ::= IDENTIFIER ASSIGN expr
-    |   IDENTIFIER PLUS_ASSIGN expr
-    |   IDENTIFIER MINUS_ASSIGN expr
+    ::= IDENTIFICADOR:id ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "=", e, idleft, idright); :}
+    |   IDENTIFICADOR:id MAS_ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "+=", e, idleft, idright); :}
+    |   IDENTIFICADOR:id MENOS_ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "-=", e, idleft, idright); :}
     ;
 
-/* ── Sentencia if / if-else ────────────────────────────────────────────
-   La condición puede ir con o sin paréntesis (el enunciado lo permite).  */
-/* ── Sentencia if / if-else ────────────────────────────────────────────
-   GoLite no requiere paréntesis en la condición                          */
+/* ── If ─────────────────────────────────────────────────────────────── */
 if_stmt
-    ::= IF expr bloque
-    |   IF expr bloque ELSE bloque
-    |   IF expr bloque ELSE if_stmt
+    ::= SI:i expr:c bloque:b
+        {: RESULT = new NodoIf(c, b, null, ileft, iright); :}
+    |   SI:i expr:c bloque:b SINO bloque:e
+        {: RESULT = new NodoIf(c, b, e, ileft, iright); :}
+    |   SI:i expr:c bloque:b SINO if_stmt:ei
+        {: RESULT = new NodoIf(c, b, ei, ileft, iright); :}
     ;
 
-/* ── Sentencia for ──────────────────────*/
+/* ── For ────────────────────────────────────────────────────────────── */
 for_stmt
-    ::= FOR for_init SEMICOLON expr SEMICOLON for_post bloque
+    ::= PARA:f bloque:b
+        {: RESULT = new Nodofor(null, null, null, b, fleft, fright); :}
+    |   PARA:f expr:c bloque:b
+        {: RESULT = new Nodofor(null, c, null, b, fleft, fright); :}
+    |   PARA:f for_init:i PUNTO_COMA expr:c PUNTO_COMA for_post:p bloque:b
+        {: RESULT = new Nodofor(i, c, p, b, fleft, fright); :}
     ;
 
-/* Inicialización del for: puede ser var_decl o asignación */
 for_init
-    ::= var_decl
-    |   asignacion
-    |   
+    ::= var_decl:v   {: RESULT = v; :}
+    |   asignacion:a {: RESULT = a; :}
+    |   /* vacío */  {: RESULT = null; :}
     ;
 
-/* Post-paso del for: i++  i--  o asignación */
 for_post
-    ::= IDENTIFIER INC
-    |   IDENTIFIER DEC
-    |   asignacion
+    ::= IDENTIFICADOR:id INCREMENTO
+        {: RESULT = new NodoIncDec(id, "++", idleft, idright); :}
+    |   IDENTIFICADOR:id DECREMENTO
+        {: RESULT = new NodoIncDec(id, "--", idleft, idright); :}
+    |   asignacion:a
+        {: RESULT = a; :}
     |   /* vacío */
+        {: RESULT = null; :}
     ;
 
-/* ── Llamada a función definida por el usuario ─────────────────────── */
+/* ── Llamada a función ──────────────────────────────────────────────── */
 llamada_funcion
-    ::= IDENTIFIER LPAREN arg_list RPAREN
+    ::= IDENTIFICADOR:id PAR_IZQ arg_list:al PAR_DER
+        {: RESULT = new NodoBloque(new ArrayList(), idleft, idright); :}
     ;
 
 arg_list
-    ::= arg_list_ne
-    |   /* vacío */
+    ::= arg_list_ne:al  {: RESULT = al; :}
+    |   /* vacío */     {: RESULT = new ArrayList(); :}
     ;
 
 arg_list_ne
-    ::= arg_list_ne COMMA expr
-    |   expr
+    ::= arg_list_ne:al COMA expr:e
+        {: al.add(e); RESULT = al; :}
+    |   expr:e
+        {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
     ;
 
-/* ── Funciones embebidas ───────────────────────────────────────────────
-   fmt.Println   → acepta 0 o más expresiones de cualquier tipo
-   strconv.Atoi  → 1 argumento string
-   strconv.ParseFloat → 1 argumento string
-   reflect.TypeOf → 1 argumento cualquier tipo                            */
+/* ── Funciones embebidas ────────────────────────────────────────────── */
 llamada_embebida
-    ::= PRINTLN  LPAREN expr_list  RPAREN     /* fmt.Println(...)         */
-    |   ATOI      LPAREN expr       RPAREN     /* strconv.Atoi(str)        */
-    |   PARSEFLOAT LPAREN expr      RPAREN     /* strconv.ParseFloat(str)  */
-    |   TYPEOF    LPAREN expr       RPAREN     /* reflect.TypeOf(val)      */
+    ::= IMPRIMIR:p PAR_IZQ expr_list:el PAR_DER
+        {: RESULT = new NodoPrintln(el, pleft, pright); :}
+    |   A_ENTERO:a PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoAtoi(e, aleft, aright); :}
+    |   A_FLOTANTE:p PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoParseFloat(e, pleft, pright); :}
+    |   TIPO_DE:t PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoTypeOf(e, tleft, tright); :}
     ;
 
-/* Lista de expresiones separadas por coma (para fmt.Println) */
 expr_list
-    ::= expr_list_ne
-    |   /* vacío */
+    ::= expr_list_ne:el  {: RESULT = el; :}
+    |   /* vacío */      {: RESULT = new ArrayList(); :}
     ;
 
 expr_list_ne
-    ::= expr_list_ne COMMA expr
-    |   expr
+    ::= expr_list_ne:el COMA expr:e
+        {: el.add(e); RESULT = el; :}
+    |   expr:e
+        {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
     ;
 
-/* ── Expresiones ───────────────────────────────────────────────────────
-    */
+/* ── Expresiones ────────────────────────────────────────────────────── */
 expr
-    /* Operaciones aritméticas */
-    ::= expr PLUS   expr
-    |   expr MINUS  expr
-    |   expr TIMES  expr
-    |   expr DIVIDE expr
-    |   expr MOD    expr
-
-    /* Operaciones de comparación */
-    |   expr EQ  expr
-    |   expr NE  expr
-    |   expr LT  expr
-    |   expr LE  expr
-    |   expr GT  expr
-    |   expr GE  expr
-
-    /* Operaciones lógicas */
-    |   expr AND expr
-    |   expr OR  expr
-    |   NOT  expr
-
-    /* Negación unaria:  -expr
-       %prec UMINUS le dice a CUP que use la precedencia de UMINUS        */
-    |   MINUS expr                    %prec UMINUS
-
-    /* Agrupación */
-    |   LPAREN expr RPAREN
-
-    /* Llamadas como expresión (función que retorna valor) */
-    |   llamada_funcion
-    |   llamada_embebida
-
-    /* Acceso a atributo de struct: instancia.campo */
-    |   expr DOT IDENTIFIER
-
-    /* Literales */
-    |   INT_LITERAL
-    |   FLOAT_LITERAL
-    |   STRING_LITERAL
-    |   RUNE_LITERAL
-    |   BOOL_LITERAL
-    |   NIL
-
-    /* Identificador (variable) */
-    |   IDENTIFIER
+    ::= expr:i MAS   expr:d  {: RESULT = new NodoBinario(i, "+",  d, ileft, iright); :}
+    |   expr:i MENOS  expr:d  {: RESULT = new NodoBinario(i, "-",  d, ileft, iright); :}
+    |   expr:i POR  expr:d  {: RESULT = new NodoBinario(i, "*",  d, ileft, iright); :}
+    |   expr:i ENTRE expr:d  {: RESULT = new NodoBinario(i, "/",  d, ileft, iright); :}
+    |   expr:i MODULO    expr:d  {: RESULT = new NodoBinario(i, "%",  d, ileft, iright); :}
+    |   expr:i IGUAL     expr:d  {: RESULT = new NodoBinario(i, "==", d, ileft, iright); :}
+    |   expr:i DIFERENTE     expr:d  {: RESULT = new NodoBinario(i, "!=", d, ileft, iright); :}
+    |   expr:i MENOR     expr:d  {: RESULT = new NodoBinario(i, "<",  d, ileft, iright); :}
+    |   expr:i MENOR_IGUAL     expr:d  {: RESULT = new NodoBinario(i, "<=", d, ileft, iright); :}
+    |   expr:i MAYOR     expr:d  {: RESULT = new NodoBinario(i, ">",  d, ileft, iright); :}
+    |   expr:i MAYOR_IGUAL     expr:d  {: RESULT = new NodoBinario(i, ">=", d, ileft, iright); :}
+    |   expr:i Y    expr:d  {: RESULT = new NodoBinario(i, "&&", d, ileft, iright); :}
+    |   expr:i O     expr:d  {: RESULT = new NodoBinario(i, "||", d, ileft, iright); :}
+    |   NO:notk expr:e        {: RESULT = new NodoUnario("!", e, 0, 0); :}
+    |   MENOS:mk expr:e {: RESULT = new NodoUnario("-", e, 0, 0); :} %prec MENOS_UNARIO
+    |   PAR_IZQ expr:e PAR_DER  {: RESULT = e; :}
+    |   llamada_funcion:lf    {: RESULT = lf; :}
+    |   llamada_embebida:le   {: RESULT = le; :}
+    |   expr:e PUNTO IDENTIFICADOR:id
+                              {: RESULT = e; :}
+    |   LITERAL_ENTERO:v         {: RESULT = new NodoLiteral(v, "int",     vleft, vright); :}
+    |   LITERAL_FLOTANTE:v       {: RESULT = new NodoLiteral(v, "float64", vleft, vright); :}
+    |   LITERAL_CADENA:v      {: RESULT = new NodoLiteral(v, "string",  vleft, vright); :}
+    |   LITERAL_RUNA:v        {: RESULT = new NodoLiteral(v, "rune",    vleft, vright); :}
+    |   LITERAL_BOOLEANO:v        {: RESULT = new NodoLiteral(v, "bool",    vleft, vright); :}
+    |   NULO                   {: RESULT = new NodoLiteral(null, "nil",  0, 0); :}
+    |   IDENTIFICADOR:id         {: RESULT = new NodoIdentificador(id, idleft, idright); :}
     ;

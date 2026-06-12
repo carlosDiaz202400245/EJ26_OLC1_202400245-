@@ -1,30 +1,20 @@
 package com.mycompany.golite.ast;
 
-/**
- * Nodo que representa la sentencia for 
- */
+/** Nodo que representa la sentencia for. */
 public class Nodofor extends Nodo {
 
-    /** Inicialización: var_decl o asignacion */
+    /** Inicialización: var_decl o asignación. */
     public Nodo init;
 
-    /** Condición del loop — debe evaluar a bool */
+    /** Condición del loop (debe evaluar a bool). */
     public Nodo condicion;
 
-    /** Post-paso: i++, i--, o asignacion */
+    /** Post-paso: i++, i-- o asignación. */
     public Nodo post;
 
-    /** Cuerpo del loop */
+    /** Cuerpo del loop. */
     public Nodo bloque;
 
-    /**
-     * @param init      inicialización
-     * @param condicion condición del loop
-     * @param post      post-paso
-     * @param bloque    cuerpo del loop
-     * @param linea     línea en el código fuente
-     * @param columna   columna en el código fuente
-     */
     public Nodofor(Nodo init, Nodo condicion, Nodo post, Nodo bloque,
                    int linea, int columna) {
         super(linea, columna);

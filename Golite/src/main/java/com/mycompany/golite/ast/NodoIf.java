@@ -1,33 +1,17 @@
 package com.mycompany.golite.ast;
 
-/**
- * Nodo que representa la sentencia if / else if / else.
-
- */
+/** Nodo que representa la sentencia if / else if / else. */
 public class NodoIf extends Nodo {
 
-    /** Condición del if — debe evaluar a bool */
+    /** Condición del if  */
     public Nodo condicion;
 
-    /** Bloque que se ejecuta si la condición es true */
+    /** Bloque que se ejecuta si la condición es true. */
     public Nodo bloqueThen;
 
-    /**
-     * Bloque o nodo que se ejecuta si la condición es false.
-     * Puede ser:
-     *   - null          = no hay else
-     *   - NodoBloque    = else { }
-     *   - NodoIf        =else if 
-     */
+
     public Nodo bloqueElse;
 
-    /**
-     * @param condicion   expresión booleana
-     * @param bloqueThen  bloque del if
-     * @param bloqueElse  bloque del else / else if, o null
-     * @param linea       línea en el código fuente
-     * @param columna     columna en el código fuente
-     */
     public NodoIf(Nodo condicion, Nodo bloqueThen, Nodo bloqueElse,
                   int linea, int columna) {
         super(linea, columna);
@@ -39,10 +23,8 @@ public class NodoIf extends Nodo {
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
 
-        // Evaluar la condición
+        // La condición debe ser booleana
         Object valorCond = condicion.ejecutar(entorno);
-
-        // Verificar que la condición sea booleana
         if (!(valorCond instanceof Boolean)) {
             throw new RuntimeException(
                 "[Error Semántico] Línea " + linea + ", Columna " + columna
@@ -54,19 +36,15 @@ public class NodoIf extends Nodo {
         boolean condBool = (Boolean) valorCond;
 
         if (condBool) {
-            // Ejecutar bloque then
             return bloqueThen.ejecutar(entorno);
         } else if (bloqueElse != null) {
-            // Ejecutar bloque else o else if
-            return bloqueElse.ejecutar(entorno);
+            return bloqueElse.ejecutar(entorno);   // else o else if
         }
 
         return null;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // utiñlidad
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDAD ──────────────────────────────────────────────────────
     private String nombreTipo(Object v) {
         if (v instanceof Integer) return "int";
         if (v instanceof Double)  return "float64";

@@ -1,0 +1,30 @@
+# ─── Compilados de Maven / Java ──────────────────────────────
+target/
+*.class
+
+# ─── JAR generado ────────────────────────────────────────────
+*.jar
+!**/lib/*.jar
+
+# ─── Código generado por CUP y JFlex (se regenera al compilar) ─
+src/main/java/com/mycompany/golite/parser/parser.java
+src/main/java/com/mycompany/golite/parser/sym.java
+src/main/java/com/mycompany/golite/GoliteLexer.java
+*.java~
+
+# ─── Archivos de IDE ─────────────────────────────────────────
+.vscode/
+.idea/
+*.iml
+nbproject/
+nbactions.xml
+
+# ─── Sistema operativo ───────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Logs y temporales ───────────────────────────────────────
+*.log
+*.tmp
+*.bak

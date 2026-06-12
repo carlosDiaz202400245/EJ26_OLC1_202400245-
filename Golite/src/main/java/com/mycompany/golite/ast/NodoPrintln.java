@@ -3,28 +3,15 @@ package com.mycompany.golite.ast;
 import java.util.List;
 
 /**
- * Nodo que representa la función embebida fmt.Println.
- *
- * Características del archivo del aux
- *   - Acepta 0 o más expresiones separadas por coma
- *   - Los elementos se imprimen separados por un espacio
- *   - Siempre imprime un salto de línea al final
- *   - Si no hay argumentos imprime solo un salto de línea
-
+ * Nodo de la función embebida fmt.Println
  */
 public class NodoPrintln extends Nodo {
 
-    /** Lista de expresiones a imprimir */
     public List<Nodo> argumentos;
 
-    /** Referencia a la consola de la GUI para imprimir ahí */
+    /** Consola de la GUI donde se imprime. */
     public static com.mycompany.golite.gui.ConsolePanel consola;
 
-    /**
-     * @param argumentos lista de expresiones a imprimir
-     * @param linea      línea en el código fuente
-     * @param columna    columna en el código fuente
-     */
     public NodoPrintln(List<Nodo> argumentos, int linea, int columna) {
         super(linea, columna);
         this.argumentos = argumentos;
@@ -56,9 +43,7 @@ public class NodoPrintln extends Nodo {
         return null;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // FORMATEAR VALOR PARA IMPRIMIR
-    // ─────────────────────────────────────────────────────────────────
+    // ─── FORMATEAR VALOR PARA IMPRIMIR ─────────────────────────────────
     private String formatear(Object valor) {
         if (valor == null)            return "nil";
         if (valor instanceof Boolean) return valor.toString();
@@ -68,13 +53,9 @@ public class NodoPrintln extends Nodo {
         return valor.toString();
     }
 
-    /**
-     * Formatea un Double igual que Go
-     */
+    /** Formatea un Double igual que Go. */
     private String formatearDouble(Double d) {
         if (d == Math.floor(d) && !Double.isInfinite(d)) {
-            // Es un número entero guardado como double: 1.0 = "1"
-            // Pero si fue declarado float64 lo mostramos con decimales: 1.00001 segun la regla
             return String.valueOf(d);
         }
         return String.valueOf(d);

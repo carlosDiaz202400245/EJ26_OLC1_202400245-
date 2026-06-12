@@ -18,6 +18,10 @@ import java.util.List;
     public static List<TokenReporte> listaTokens  = new ArrayList<>();
     public static List<ErrorLexico>  listaErrores = new ArrayList<>();
 
+    // Cuando es false, el lexer NO registra tokens ni errores en las listas.
+    // Se usa para la pasada del parser, evitando duplicar el reporte léxico.
+    public static boolean registrar = true;
+
     /**
      * Crea el Symbol para CUP, registra el token en la lista de reporte
      * y lo retorna. Usa yyline+1 / yycolumn+1 para base-1.
@@ -25,7 +29,9 @@ import java.util.List;
     private Symbol token(int tipo, Object valor) {
         int lin = yyline + 1;
         int col = yycolumn + 1;
-        listaTokens.add(new TokenReporte(yytext(), SymUtils.nombreTipo(tipo), lin, col));
+        if (registrar) {
+            listaTokens.add(new TokenReporte(yytext(), SymUtils.nombreTipo(tipo), lin, col));
+        }
         return new Symbol(tipo, lin, col, valor);
     }
 
@@ -34,12 +40,14 @@ import java.util.List;
     }
 
     private void errorLexico() {
-    int lin = yyline + 1;
-    int col = yycolumn + 1;
-    String msg = "El símbolo \"" + yytext() + "\" no es aceptado en el lenguaje.";
-    listaErrores.add(new ErrorLexico(msg, lin, col));  // ← lista original intacta
-    Errores.agregarLexico(msg, lin, col);              // ← también va a Errores
-}
+        int lin = yyline + 1;
+        int col = yycolumn + 1;
+        String msg = "El símbolo \"" + yytext() + "\" no es aceptado en el lenguaje.";
+        if (registrar) {
+            listaErrores.add(new ErrorLexico(msg, lin, col));
+            Errores.agregarLexico(msg, lin, col);
+        }
+    }
 %}
 
 // ─── MACROS ───────────────────────────────────────────────────────────
@@ -65,51 +73,51 @@ whitespace   = [ \r\t\f\n]+
 // COMENTARIOS E IGNORADOS
 
 // ─────────────────────────────────────────────────────────────────────
-"//" [^\r\n]*               
-"/*" ~"*/"                   
-{whitespace}                 
+"//" [^\r\n]*                { /* ignorar */ }
+"/*" ~"*/"                   { /* ignorar */ }
+{whitespace}                 { /* ignorar */ }                
 
 // ─────────────────────────────────────────────────────────────────────
 // FUNCIONES EMBEBIDAS
 // Deben ir ANTES que IDENTIFICADOR y ANTES que el operador punto "."
 // porque contienen un punto en su lexema.
 // ─────────────────────────────────────────────────────────────────────
-"fmt.Println"                { return token(sym.PRINTLN);       }
-"strconv.Atoi"               { return token(sym.ATOI);          }
-"strconv.ParseFloat"         { return token(sym.PARSEFLOAT);    }
-"reflect.TypeOf"             { return token(sym.TYPEOF);        }
+"fmt.Println"                { return token(sym.IMPRIMIR);       }
+"strconv.Atoi"               { return token(sym.A_ENTERO);          }
+"strconv.ParseFloat"         { return token(sym.A_FLOTANTE);    }
+"reflect.TypeOf"             { return token(sym.TIPO_DE);        }
 
 // ─────────────────────────────────────────────────────────────────────
 // PALABRAS RESERVADAS
 // Deben ir ANTES que IDENTIFICADOR
 // ─────────────────────────────────────────────────────────────────────
-"var"                        { return token(sym.VAR);           }
-"func"                       { return token(sym.FUNC);          }
-"if"                         { return token(sym.IF);            }
-"else"                       { return token(sym.ELSE);          }
-"for"                        { return token(sym.FOR);           }
-"break"                      { return token(sym.BREAK);         }
-"continue"                   { return token(sym.CONTINUE);      }
-"return"                     { return token(sym.RETURN);        }
-"nil"                        { return token(sym.NIL);           }
+"var"                        { return token(sym.VARIABLE);           }
+"func"                       { return token(sym.FUNCION);          }
+"if"                         { return token(sym.SI);            }
+"else"                       { return token(sym.SINO);          }
+"for"                        { return token(sym.PARA);           }
+"break"                      { return token(sym.ROMPER);         }
+"continue"                   { return token(sym.CONTINUAR);      }
+"return"                     { return token(sym.RETORNAR);        }
+"nil"                        { return token(sym.NULO);           }
 
 // Tipos de datos
-"int"                        { return token(sym.INT_TYPE);      }
-"float64"                    { return token(sym.FLOAT_TYPE);    }
-"string"                     { return token(sym.STRING_TYPE);   }
-"bool"                       { return token(sym.BOOL_TYPE);     }
-"rune"                       { return token(sym.RUNE_TYPE);     }
+"int"                        { return token(sym.TIPO_ENTERO);      }
+"float64"                    { return token(sym.TIPO_FLOTANTE);    }
+"string"                     { return token(sym.TIPO_CADENA);   }
+"bool"                       { return token(sym.TIPO_BOOLEANO);     }
+"rune"                       { return token(sym.TIPO_RUNA);     }
 
 // Literales booleanos (son palabras reservadas en GoLite)
-"true"                       { return token(sym.BOOL_LITERAL, true);  }
-"false"                      { return token(sym.BOOL_LITERAL, false); }
+"true"                       { return token(sym.LITERAL_BOOLEANO, true);  }
+"false"                      { return token(sym.LITERAL_BOOLEANO, false); }
 
 // ─────────────────────────────────────────────────────────────────────
 // LITERALES NUMÉRICOS
-// DECIMAL antes que ENTERO: evita que "1.5" → INT(1) + DOT + INT(5)
+// DECIMAL antes que ENTERO: evita que "1.5" → INT(1) + PUNTO + INT(5)
 // ─────────────────────────────────────────────────────────────────────
-{digit}+ "." {digit}+        { return token(sym.FLOAT_LITERAL, Double.parseDouble(yytext())); }
-{digit}+                     { return token(sym.INT_LITERAL,   Integer.parseInt(yytext()));   }
+{digit}+ "." {digit}+        { return token(sym.LITERAL_FLOTANTE, Double.parseDouble(yytext())); }
+{digit}+                     { return token(sym.LITERAL_ENTERO,   Integer.parseInt(yytext()));   }
 
 // ─────────────────────────────────────────────────────────────────────
 // LITERAL STRING
@@ -117,18 +125,18 @@ whitespace   = [ \r\t\f\n]+
 \" {str_content} \"          {
                                  // Guardamos el texto sin las comillas externas
                                  String val = yytext().substring(1, yytext().length() - 1);
-                                 return token(sym.STRING_LITERAL, val);
+                                 return token(sym.LITERAL_CADENA, val);
                              }
 
 // ─────────────────────────────────────────────────────────────────────
 // LITERAL RUNE  (comilla simple)
 // ─────────────────────────────────────────────────────────────────────
-\' {rune_content} \'         { return token(sym.RUNE_LITERAL, yytext()); }
+\' {rune_content} \'         { return token(sym.LITERAL_RUNA, yytext()); }
 
 // ─────────────────────────────────────────────────────────────────────
 // IDENTIFICADORES
 // ─────────────────────────────────────────────────────────────────────
-{letter} {alphanumeric}*     { return token(sym.IDENTIFIER, yytext()); }
+{letter} {alphanumeric}*     { return token(sym.IDENTIFICADOR, yytext()); }
 
 // ─────────────────────────────────────────────────────────────────────
 // OPERADORES
@@ -137,49 +145,47 @@ whitespace   = [ \r\t\f\n]+
 // ─────────────────────────────────────────────────────────────────────
 
 // Asignación
-":="                         { return token(sym.DEFINE);        }
-"="                          { return token(sym.ASSIGN);        }
+":="                         { return token(sym.DEFINIR);        }
+"="                          { return token(sym.ASIGNAR);        }
 
 // Asignación compuesta
-"+="                         { return token(sym.PLUS_ASSIGN);   }
-"-="                         { return token(sym.MINUS_ASSIGN);  }
+"+="                         { return token(sym.MAS_ASIGNAR);   }
+"-="                         { return token(sym.MENOS_ASIGNAR);  }
 
 // Incremento / Decremento (necesarios para "i++" en el for)
-"++"                         { return token(sym.INC);           }
-"--"                         { return token(sym.DEC);           }
+"++"                         { return token(sym.INCREMENTO);           }
+"--"                         { return token(sym.DECREMENTO);           }
 
 // Aritméticos
-"+"                          { return token(sym.PLUS);          }
-"-"                          { return token(sym.MINUS);         }
-"*"                          { return token(sym.TIMES);         }
-"/"                          { return token(sym.DIVIDE);        }
-"%"                          { return token(sym.MOD);           }
+"+"                          { return token(sym.MAS);          }
+"-"                          { return token(sym.MENOS);         }
+"*"                          { return token(sym.POR);         }
+"/"                          { return token(sym.ENTRE);        }
+"%"                          { return token(sym.MODULO);           }
 
 // Comparación (dos chars antes que uno)
-"=="                         { return token(sym.EQ);            }
-"!="                         { return token(sym.NE);            }
-"<="                         { return token(sym.LE);            }
-">="                         { return token(sym.GE);            }
-"<"                          { return token(sym.LT);            }
-">"                          { return token(sym.GT);            }
+"=="                         { return token(sym.IGUAL);            }
+"!="                         { return token(sym.DIFERENTE);            }
+"<="                         { return token(sym.MENOR_IGUAL);            }
+">="                         { return token(sym.MAYOR_IGUAL);            }
+"<"                          { return token(sym.MENOR);            }
+">"                          { return token(sym.MAYOR);            }
 
 // Lógicos
-"&&"                         { return token(sym.AND);           }
-"||"                         { return token(sym.OR);            }
-"!"                          { return token(sym.NOT);           }
+"&&"                         { return token(sym.Y);           }
+"||"                         { return token(sym.O);            }
+"!"                          { return token(sym.NO);           }
 
 // ─────────────────────────────────────────────────────────────────────
 // DELIMITADORES
 // ─────────────────────────────────────────────────────────────────────
-"("                          { return token(sym.LPAREN);        }
-")"                          { return token(sym.RPAREN);        }
-"{"                          { return token(sym.LBRACE);        }
-"}"                          { return token(sym.RBRACE);        }
-"["                          { return token(sym.LBRACKET);      }
-"]"                          { return token(sym.RBRACKET);      }
-","                          { return token(sym.COMMA);         }
-";"                          { return token(sym.SEMICOLON);     }
-"."                          { return token(sym.DOT);           }
+"("                          { return token(sym.PAR_IZQ);        }
+")"                          { return token(sym.PAR_DER);        }
+"{"                          { return token(sym.LLAVE_IZQ);        }
+"}"                          { return token(sym.LLAVE_DER);        }
+","                          { return token(sym.COMA);         }
+";"                          { return token(sym.PUNTO_COMA);     }
+"."                          { return token(sym.PUNTO);           }
 
 // ─────────────────────────────────────────────────────────────────────
 // ERROR LÉXICO — debe ser la ÚLTIMA regla

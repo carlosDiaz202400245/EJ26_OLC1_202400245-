@@ -90,6 +90,7 @@ javac -encoding UTF-8 ^
     -cp "%CUP_RT%" ^
     -d %OUT% ^
     %SRC%\com\mycompany\golite\parser\*.java ^
+    %SRC%\com\mycompany\golite\ast\*.java ^
     %SRC%\com\mycompany\golite\*.java ^
     %SRC%\com\mycompany\golite\gui\*.java
 

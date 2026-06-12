@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.List;
  
 public class MainWindow extends JFrame {
  
@@ -23,9 +24,7 @@ public class MainWindow extends JFrame {
         setupLayout();
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // INICIALIZACIÓN
-    // ─────────────────────────────────────────────────────────────────
+    // ─── INICIALIZACIÓN ────────────────────────────────────────────────
     private void initComponents() {
         setTitle("GoLite IDE - Fase 1");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,9 +78,7 @@ public class MainWindow extends JFrame {
         consolePanel.setPreferredSize(new Dimension(1000, 180));
         add(bottomPanel, BorderLayout.SOUTH);
  
-        // ─────────────────────────────────────────────────────────────
-        // ACCIONES
-        // ─────────────────────────────────────────────────────────────
+        // ─── ACCIONES ──────────────────────────────────────────────────
         btnNew.addActionListener(e -> accionNuevo());
         btnOpen.addActionListener(e -> accionAbrir());
         btnSave.addActionListener(e -> accionGuardar());
@@ -92,9 +89,7 @@ public class MainWindow extends JFrame {
         btnClear.addActionListener(e -> consolePanel.clear());
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // NUEVO ARCHIVO
-    // ─────────────────────────────────────────────────────────────────
+    // ─── NUEVO ARCHIVO ─────────────────────────────────────────────────
     private void accionNuevo() {
         if (!editorPanel.getText().isEmpty()) {
             int op = JOptionPane.showConfirmDialog(this,
@@ -109,9 +104,7 @@ public class MainWindow extends JFrame {
         consolePanel.println("Nuevo archivo creado.");
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // ABRIR ARCHIVO .glt
-    // ─────────────────────────────────────────────────────────────────
+    // ─── ABRIR ARCHIVO .glt ────────────────────────────────────────────
     private void accionAbrir() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Abrir archivo GoLite");
@@ -138,21 +131,16 @@ public class MainWindow extends JFrame {
         }
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // GUARDAR ARCHIVO
-    // ─────────────────────────────────────────────────────────────────
+    // ─── GUARDAR ARCHIVO ───────────────────────────────────────────────
     private void accionGuardar() {
         if (archivoActual == null) {
-            // No hay archivo actual → pedir ruta
-            accionGuardarComo();
+            accionGuardarComo();   // sin archivo actual → pedir ruta
         } else {
             guardarEn(archivoActual);
         }
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // GUARDAR COMO
-    // ─────────────────────────────────────────────────────────────────
+    // ─── GUARDAR COMO ──────────────────────────────────────────────────
     private void accionGuardarComo() {
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Guardar archivo GoLite");
@@ -160,7 +148,7 @@ public class MainWindow extends JFrame {
                 "Archivos GoLite (*.glt)", "glt"));
         chooser.setAcceptAllFileFilterUsed(false);
  
-        // si tenemos actual un archivo que nos empiece ahi
+        // si ya hay un archivo, empezar en su carpeta
         if (archivoActual != null) {
             chooser.setCurrentDirectory(archivoActual.getParentFile());
             chooser.setSelectedFile(archivoActual);
@@ -170,8 +158,8 @@ public class MainWindow extends JFrame {
         if (resultado != JFileChooser.APPROVE_OPTION) return;
  
         File archivo = chooser.getSelectedFile();
- 
-        // que sea .glt
+
+        // forzar extensión .glt
         if (!archivo.getName().toLowerCase().endsWith(".glt")) {
             archivo = new File(archivo.getAbsolutePath() + ".glt");
         }
@@ -179,9 +167,7 @@ public class MainWindow extends JFrame {
         guardarEn(archivo);
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // guardar
-    // ─────────────────────────────────────────────────────────────────
+    // ─── GUARDAR EN DISCO ──────────────────────────────────────────────
     private void guardarEn(File archivo) {
         try {
             Files.writeString(archivo.toPath(),
@@ -196,9 +182,7 @@ public class MainWindow extends JFrame {
         }
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // EJECUTAR : rezar por que no haya errores léxicos ni sintácticos xd
-    // ─────────────────────────────────────────────────────────────────
+    // ─── EJECUTAR (léxico → sintáctico → interpretación) ───────────────
     private void accionEjecutar() {
         consolePanel.clear();
  
@@ -206,6 +190,7 @@ public class MainWindow extends JFrame {
         GoliteLexer.listaTokens.clear();
         GoliteLexer.listaErrores.clear();
         com.mycompany.golite.parser.parser.erroresSintacticos.clear();
+        com.mycompany.golite.Errores.limpiar();
  
         String codigo = editorPanel.getText();
         if (codigo.trim().isEmpty()) {
@@ -213,46 +198,65 @@ public class MainWindow extends JFrame {
             return;
         }
  
+        // ─── 1) ANÁLISIS LÉXICO COMPLETO ──────────────────────────────
+        // Escanea todo el archivo aparte del parser, para que la tabla de
+        // tokens y los errores léxicos queden completos aunque el parser falle.
         try {
-            GoliteLexer lexer = new GoliteLexer(
-                    new java.io.StringReader(codigo));
+            GoliteLexer.registrar = true;
+            GoliteLexer lexerScan = new GoliteLexer(new java.io.StringReader(codigo));
+            java_cup.runtime.Symbol tok;
+            do {
+                tok = lexerScan.next_token();
+            } while (tok != null && tok.sym != com.mycompany.golite.parser.sym.EOF);
+        } catch (Exception ex) {
+            consolePanel.println("Error durante el análisis léxico: " + ex.getMessage());
+        }
+
+        // ─── 2) ANÁLISIS SINTÁCTICO ───────────────────────────────────
+        // Usa un lexer nuevo con el registro apagado para no duplicar tokens;
+        // los errores sintácticos quedan en parser.erroresSintacticos.
+        Object resultado = null;
+        try {
+            GoliteLexer.registrar = false;
+            GoliteLexer lexerParse = new GoliteLexer(new java.io.StringReader(codigo));
             com.mycompany.golite.parser.parser parser =
                     new com.mycompany.golite.parser.parser();
-            parser.setScanner(lexer);
-            parser.parse();
- 
-            consolePanel.println("=== Análisis completado ===");
-            consolePanel.println("Tokens reconocidos : "
-                    + GoliteLexer.listaTokens.size());
-            consolePanel.println("Errores léxicos    : "
-                    + GoliteLexer.listaErrores.size());
-            consolePanel.println("Errores sintácticos: "
-                    + com.mycompany.golite.parser.parser.erroresSintacticos.size());
- 
-            // Mostrar errores directamente si los hay
-            if (!GoliteLexer.listaErrores.isEmpty()) {
-                consolePanel.println("\n--- Errores léxicos ---");
-                for (var err : GoliteLexer.listaErrores) {
-                    consolePanel.println("  Línea " + err.linea
-                            + ", Col " + err.columna + ": " + err.mensaje);
-                }
-            }
-            if (!com.mycompany.golite.parser.parser.erroresSintacticos.isEmpty()) {
-                consolePanel.println("\n--- Errores sintácticos ---");
-                for (var err : com.mycompany.golite.parser.parser.erroresSintacticos) {
-                    consolePanel.println("  " + err);
-                }
-            }
- 
+            parser.setScanner(lexerParse);
+            java_cup.runtime.Symbol res = parser.parse();
+            resultado = (res != null) ? res.value : null;
         } catch (Exception ex) {
-            consolePanel.println("Error durante el análisis: " + ex.getMessage());
-            ex.printStackTrace();
+            // Error sintáctico irrecuperable: ya quedó registrado.
+        } finally {
+            GoliteLexer.registrar = true;
+        }
+
+        int errLex = GoliteLexer.listaErrores.size();
+        int errSin = com.mycompany.golite.parser.parser.erroresSintacticos.size();
+
+        // ─── 3) EJECUCIÓN (solo si no hubo errores) ───────────────────
+        if (errLex == 0 && errSin == 0 && resultado != null) {
+            try {
+                List<com.mycompany.golite.ast.Nodo> ast =
+                        (List<com.mycompany.golite.ast.Nodo>) resultado;
+                new com.mycompany.golite.Interprete(consolePanel).ejecutar(ast);
+            } catch (Exception ex) {
+                consolePanel.println("Error durante la ejecución: " + ex.getMessage());
+            }
+        }
+
+        consolePanel.println("=== Análisis completado ===");
+        consolePanel.println("Tokens reconocidos  : " + GoliteLexer.listaTokens.size());
+        consolePanel.println("Errores léxicos     : " + errLex);
+        consolePanel.println("Errores sintácticos : " + errSin);
+
+        if (errLex == 0 && errSin == 0) {
+            consolePanel.println("\nCódigo analizado sin errores.");
+        } else {
+            consolePanel.println("\nSe encontraron errores. Presiona 'Ver Errores' para el reporte.");
         }
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // VER TOKENS
-    // ─────────────────────────────────────────────────────────────────
+    // ─── VER TOKENS ────────────────────────────────────────────────────
     private void accionVerTokens() {
         if (GoliteLexer.listaTokens.isEmpty()) {
             consolePanel.println("No hay tokens. Ejecuta el análisis primero.");
@@ -271,37 +275,43 @@ public class MainWindow extends JFrame {
         consolePanel.println("Total: " + GoliteLexer.listaTokens.size() + " tokens.");
     }
  
-    // ─────────────────────────────────────────────────────────────────
-    // VER ERRORES
-    // ─────────────────────────────────────────────────────────────────
     private void accionVerErrores() {
-        int totalLex  = GoliteLexer.listaErrores.size();
-        int totalSin  = com.mycompany.golite.parser.parser.erroresSintacticos.size();
+        int totalLex = GoliteLexer.listaErrores.size();
+        int totalSin = com.mycompany.golite.parser.parser.erroresSintacticos.size();
  
         if (totalLex == 0 && totalSin == 0) {
             consolePanel.println("No se encontraron errores.");
             return;
         }
+ 
         consolePanel.clear();
-        consolePanel.println("=== REPORTE DE ERRORES ===");
+        consolePanel.println("=== REPORTE DE ERRORES ===\n");
+ 
+        String header = String.format("%-5s %-10s %-8s %-8s %s",
+                "No.", "Tipo", "Línea", "Columna", "Descripción");
+        String separador = "-".repeat(75);
+ 
+        int contador = 1;
  
         if (totalLex > 0) {
-            consolePanel.println("\n--- Errores Léxicos (" + totalLex + ") ---");
-            consolePanel.println(String.format("%-5s %-8s %-8s %-10s %s",
-                    "No.", "Línea", "Columna", "Tipo", "Descripción"));
-            consolePanel.println("-".repeat(70));
-            int i = 1;
+            consolePanel.println("--- Errores Léxicos (" + totalLex + ") ---");
+            consolePanel.println(header);
+            consolePanel.println(separador);
             for (var err : GoliteLexer.listaErrores) {
-                consolePanel.println(String.format("%-5d %-8d %-8d %-10s %s",
-                        i++, err.linea, err.columna, "Léxico", err.mensaje));
+                consolePanel.println(String.format("%-5d %-10s %-8d %-8d %s",
+                        contador++, "Léxico", err.linea, err.columna, err.mensaje));
             }
+            consolePanel.println("");
         }
  
         if (totalSin > 0) {
-            consolePanel.println("\n--- Errores Sintácticos (" + totalSin + ") ---");
-            int i = 1;
+            contador = 1;
+            consolePanel.println("--- Errores Sintácticos (" + totalSin + ") ---");
+            consolePanel.println(header);
+            consolePanel.println(separador);
             for (var err : com.mycompany.golite.parser.parser.erroresSintacticos) {
-                consolePanel.println("  " + i++ + ". " + err);
+                consolePanel.println(String.format("%-5d %-10s %-8d %-8d %s",
+                        contador++, "Sintáctico", err.linea, err.columna, err.descripcion));
             }
         }
     }

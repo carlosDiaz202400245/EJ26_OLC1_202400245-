@@ -70,11 +70,11 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
     "\1\13\1\14\1\15\1\16\1\17\1\20\4\21\1\22"+
     "\1\21\1\23\3\21\1\24\1\25\1\26\1\27\1\30"+
     "\2\0\1\31\4\32\1\33\10\32\1\34\1\35\3\32"+
-    "\1\36\6\32\1\37\1\40\1\41\1\0\1\32\1\0"+
-    "\1\42\1\43\1\44\1\32\1\45\1\46\1\47\1\32"+
-    "\1\50\1\32\1\51\1\52\1\53\1\54\1\55\1\56"+
-    "\1\32\1\57\1\60\1\61\1\62\1\63\2\32\1\64"+
-    "\1\32\1\65\1\66\1\67\u0182\0";
+    "\1\36\6\32\1\0\1\37\2\0\1\32\1\0\1\40"+
+    "\1\41\1\42\1\32\1\43\1\44\1\45\1\32\1\46"+
+    "\1\32\1\47\1\50\1\51\1\52\1\53\1\54\1\32"+
+    "\1\55\1\56\1\57\1\60\1\61\2\32\1\62\1\32"+
+    "\1\63\1\64\1\65\u0182\0";
 
   private static int [] zzUnpackcmap_blocks() {
     int [] result = new int[512];
@@ -103,19 +103,19 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
   private static final String ZZ_ACTION_PACKED_0 =
     "\1\0\1\1\1\2\1\3\1\1\1\4\2\1\1\5"+
     "\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15"+
-    "\1\1\1\16\1\17\1\20\1\21\1\22\1\23\1\24"+
-    "\12\22\1\25\1\1\1\26\1\27\1\0\1\30\1\0"+
-    "\1\31\2\0\1\32\1\33\1\34\1\35\1\0\1\36"+
-    "\1\0\1\37\1\40\1\41\1\42\11\22\1\43\7\22"+
-    "\1\44\1\45\1\0\1\46\7\22\1\47\1\22\1\50"+
-    "\1\51\5\22\1\52\1\53\1\54\2\22\1\55\2\22"+
-    "\1\0\1\56\2\22\1\57\2\22\1\60\1\61\1\22"+
-    "\1\62\1\22\1\0\6\22\1\0\1\22\1\63\1\22"+
-    "\1\64\1\22\1\65\1\0\2\22\1\66\13\0\1\67"+
-    "\4\0\1\70\3\0\1\71\4\0\1\72";
+    "\1\1\1\16\1\17\1\20\1\21\13\22\1\23\1\1"+
+    "\1\24\1\25\1\0\1\26\1\0\1\27\2\0\1\30"+
+    "\1\31\1\32\1\33\1\0\1\2\1\0\1\34\1\35"+
+    "\1\36\1\37\11\22\1\40\7\22\1\41\1\42\1\0"+
+    "\1\43\7\22\1\44\1\22\1\45\1\46\5\22\1\47"+
+    "\1\2\1\50\2\22\1\51\2\22\1\0\1\52\2\22"+
+    "\1\53\2\22\1\54\1\55\1\22\1\56\1\22\1\0"+
+    "\6\22\1\0\1\22\1\57\1\22\1\60\1\22\1\61"+
+    "\1\0\2\22\1\62\13\0\1\63\4\0\1\64\3\0"+
+    "\1\65\4\0\1\66";
 
   private static int [] zzUnpackAction() {
-    int [] result = new int[157];
+    int [] result = new int[155];
     int offset = 0;
     offset = zzUnpackAction(ZZ_ACTION_PACKED_0, offset, result);
     return result;
@@ -140,29 +140,29 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
   private static final int [] ZZ_ROWMAP = zzUnpackRowMap();
 
   private static final String ZZ_ROWMAP_PACKED_0 =
-    "\0\0\0\70\0\160\0\250\0\340\0\70\0\u0118\0\u0150"+
-    "\0\70\0\70\0\70\0\u0188\0\70\0\u01c0\0\70\0\u01f8"+
-    "\0\u0230\0\u0268\0\70\0\u02a0\0\u02d8\0\u0310\0\u0348\0\70"+
-    "\0\70\0\u0380\0\u03b8\0\u03f0\0\u0428\0\u0460\0\u0498\0\u04d0"+
-    "\0\u0508\0\u0540\0\u0578\0\70\0\u05b0\0\70\0\70\0\340"+
-    "\0\70\0\u05e8\0\70\0\u0620\0\u0658\0\70\0\70\0\70"+
-    "\0\70\0\u0690\0\u06c8\0\u0700\0\70\0\70\0\70\0\70"+
-    "\0\u0738\0\u0770\0\u07a8\0\u07e0\0\u0818\0\u0850\0\u0888\0\u08c0"+
-    "\0\u08f8\0\u0348\0\u0930\0\u0968\0\u09a0\0\u09d8\0\u0a10\0\u0a48"+
-    "\0\u0a80\0\70\0\70\0\u0ab8\0\u0700\0\u0af0\0\u0b28\0\u0b60"+
-    "\0\u0b98\0\u0bd0\0\u0c08\0\u0c40\0\u0348\0\u0c78\0\u0348\0\u0348"+
-    "\0\u0cb0\0\u0ce8\0\u0d20\0\u0d58\0\u0d90\0\u0348\0\70\0\u0348"+
-    "\0\u0dc8\0\u0e00\0\u0348\0\u0e38\0\u0e70\0\u0ea8\0\u0348\0\u0ee0"+
-    "\0\u0f18\0\u0348\0\u0f50\0\u0f88\0\u0348\0\u0348\0\u0fc0\0\u0348"+
-    "\0\u0ff8\0\u1030\0\u1068\0\u10a0\0\u10d8\0\u1110\0\u1148\0\u1180"+
-    "\0\u11b8\0\u11f0\0\u0348\0\u1228\0\u0348\0\u1260\0\u0348\0\u1298"+
-    "\0\u12d0\0\u1308\0\u0348\0\u1340\0\u1378\0\u13b0\0\u13e8\0\u1420"+
-    "\0\u1458\0\u1490\0\u14c8\0\u1500\0\u1538\0\u1570\0\70\0\u15a8"+
-    "\0\u15e0\0\u1618\0\u1650\0\70\0\u1688\0\u16c0\0\u16f8\0\70"+
-    "\0\u1730\0\u1768\0\u17a0\0\u17d8\0\70";
+    "\0\0\0\66\0\154\0\242\0\330\0\66\0\u010e\0\u0144"+
+    "\0\66\0\66\0\66\0\u017a\0\66\0\u01b0\0\66\0\u01e6"+
+    "\0\u021c\0\u0252\0\66\0\u0288\0\u02be\0\u02f4\0\u032a\0\u0360"+
+    "\0\u0396\0\u03cc\0\u0402\0\u0438\0\u046e\0\u04a4\0\u04da\0\u0510"+
+    "\0\u0546\0\66\0\u057c\0\66\0\66\0\330\0\66\0\u05b2"+
+    "\0\66\0\u05e8\0\u061e\0\66\0\66\0\66\0\66\0\u0654"+
+    "\0\u068a\0\u06c0\0\66\0\66\0\66\0\66\0\u06f6\0\u072c"+
+    "\0\u0762\0\u0798\0\u07ce\0\u0804\0\u083a\0\u0870\0\u08a6\0\u032a"+
+    "\0\u08dc\0\u0912\0\u0948\0\u097e\0\u09b4\0\u09ea\0\u0a20\0\66"+
+    "\0\66\0\u0a56\0\u06c0\0\u0a8c\0\u0ac2\0\u0af8\0\u0b2e\0\u0b64"+
+    "\0\u0b9a\0\u0bd0\0\u032a\0\u0c06\0\u032a\0\u032a\0\u0c3c\0\u0c72"+
+    "\0\u0ca8\0\u0cde\0\u0d14\0\u032a\0\66\0\u032a\0\u0d4a\0\u0d80"+
+    "\0\u032a\0\u0db6\0\u0dec\0\u0e22\0\u032a\0\u0e58\0\u0e8e\0\u032a"+
+    "\0\u0ec4\0\u0efa\0\u032a\0\u032a\0\u0f30\0\u032a\0\u0f66\0\u0f9c"+
+    "\0\u0fd2\0\u1008\0\u103e\0\u1074\0\u10aa\0\u10e0\0\u1116\0\u114c"+
+    "\0\u032a\0\u1182\0\u032a\0\u11b8\0\u032a\0\u11ee\0\u1224\0\u125a"+
+    "\0\u032a\0\u1290\0\u12c6\0\u12fc\0\u1332\0\u1368\0\u139e\0\u13d4"+
+    "\0\u140a\0\u1440\0\u1476\0\u14ac\0\66\0\u14e2\0\u1518\0\u154e"+
+    "\0\u1584\0\66\0\u15ba\0\u15f0\0\u1626\0\66\0\u165c\0\u1692"+
+    "\0\u16c8\0\u16fe\0\66";
 
   private static int [] zzUnpackRowMap() {
-    int [] result = new int[157];
+    int [] result = new int[155];
     int offset = 0;
     offset = zzUnpackRowMap(ZZ_ROWMAP_PACKED_0, offset, result);
     return result;
@@ -187,93 +187,92 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
   private static final String ZZ_TRANS_PACKED_0 =
     "\1\2\3\3\1\4\1\5\1\6\1\7\1\10\1\11"+
     "\1\12\1\13\1\14\1\15\1\16\1\17\1\20\3\21"+
-    "\1\22\1\23\1\24\1\25\1\26\6\27\1\30\1\2"+
-    "\1\31\1\27\1\32\1\33\1\34\1\35\1\27\1\36"+
-    "\3\27\1\37\2\27\1\40\1\41\1\42\1\27\1\43"+
-    "\1\27\1\44\1\45\1\46\71\0\3\3\113\0\1\47"+
-    "\40\0\2\50\2\0\1\50\1\51\32\50\1\52\27\50"+
-    "\7\0\1\53\60\0\2\54\2\0\4\54\1\0\27\54"+
-    "\1\55\27\54\14\0\1\56\12\0\1\57\56\0\1\60"+
-    "\10\0\1\61\53\0\1\62\4\0\1\63\66\0\1\64"+
-    "\1\0\3\21\73\0\1\65\67\0\1\66\67\0\1\67"+
-    "\67\0\1\70\61\0\3\27\5\0\6\27\3\0\23\27"+
-    "\24\0\3\27\5\0\6\27\3\0\13\27\1\71\1\27"+
-    "\1\72\5\27\24\0\3\27\5\0\6\27\3\0\13\27"+
-    "\1\73\7\27\24\0\3\27\5\0\6\27\3\0\10\27"+
-    "\1\74\12\27\24\0\3\27\5\0\6\27\3\0\1\75"+
-    "\7\27\1\76\1\77\1\27\1\100\4\27\1\101\2\27"+
-    "\24\0\3\27\5\0\6\27\3\0\4\27\1\102\5\27"+
-    "\1\103\10\27\24\0\3\27\5\0\6\27\3\0\6\27"+
-    "\1\104\14\27\24\0\3\27\5\0\6\27\3\0\3\27"+
-    "\1\105\14\27\1\106\2\27\24\0\3\27\5\0\6\27"+
-    "\3\0\17\27\1\107\3\27\24\0\3\27\5\0\6\27"+
-    "\3\0\15\27\1\110\5\27\24\0\3\27\5\0\6\27"+
-    "\3\0\1\111\22\27\71\0\1\112\3\0\1\50\2\0"+
-    "\1\50\32\0\1\50\16\0\1\50\1\0\1\50\16\0"+
-    "\1\113\61\0\1\54\5\0\1\54\27\0\1\54\16\0"+
-    "\1\54\1\0\1\54\6\0\13\62\1\114\54\62\2\63"+
-    "\2\0\64\63\21\0\3\115\65\0\3\27\5\0\6\27"+
-    "\3\0\13\27\1\116\7\27\24\0\3\27\5\0\6\27"+
-    "\3\0\3\27\1\117\17\27\24\0\3\27\5\0\6\27"+
-    "\3\0\12\27\1\120\10\27\24\0\3\27\5\0\6\27"+
-    "\3\0\16\27\1\121\4\27\24\0\3\27\5\0\6\27"+
-    "\3\0\10\27\1\122\12\27\24\0\3\27\5\0\6\27"+
-    "\3\0\13\27\1\123\7\27\24\0\3\27\5\0\6\27"+
-    "\3\0\17\27\1\124\3\27\24\0\3\27\5\0\6\27"+
-    "\3\0\15\27\1\125\5\27\24\0\3\27\5\0\6\27"+
-    "\3\0\12\27\1\126\10\27\24\0\3\27\5\0\6\27"+
-    "\3\0\17\27\1\127\3\27\24\0\3\27\5\0\6\27"+
-    "\3\0\10\27\1\130\12\27\24\0\3\27\5\0\6\27"+
-    "\3\0\4\27\1\131\12\27\1\132\3\27\24\0\3\27"+
-    "\5\0\6\27\3\0\12\27\1\133\10\27\24\0\3\27"+
-    "\5\0\6\27\3\0\15\27\1\134\5\27\24\0\3\27"+
-    "\5\0\6\27\3\0\20\27\1\135\2\27\24\0\3\27"+
-    "\5\0\6\27\3\0\15\27\1\136\5\27\3\0\13\62"+
-    "\1\114\4\62\1\137\47\62\21\0\3\27\5\0\6\27"+
-    "\3\0\10\27\1\140\12\27\24\0\3\27\5\0\6\27"+
-    "\3\0\1\141\22\27\24\0\3\27\5\0\6\27\3\0"+
-    "\17\27\1\142\3\27\24\0\3\27\5\0\6\27\3\0"+
-    "\3\27\1\143\17\27\24\0\3\27\5\0\6\27\3\0"+
-    "\16\27\1\144\4\27\24\0\3\27\5\0\6\27\3\0"+
-    "\1\145\22\27\22\0\1\146\1\0\3\27\5\0\6\27"+
-    "\3\0\23\27\24\0\3\27\5\0\6\27\3\0\2\27"+
-    "\1\147\20\27\24\0\3\27\5\0\6\27\3\0\10\27"+
-    "\1\150\12\27\24\0\3\27\5\0\6\27\3\0\20\27"+
-    "\1\151\2\27\24\0\3\27\5\0\6\27\3\0\3\27"+
-    "\1\152\17\27\24\0\3\27\5\0\6\27\3\0\2\27"+
-    "\1\153\3\27\1\154\14\27\24\0\3\27\5\0\6\27"+
-    "\3\0\3\27\1\155\17\27\24\0\3\27\5\0\6\27"+
-    "\3\0\7\27\1\156\13\27\24\0\3\27\5\0\6\27"+
-    "\3\0\6\27\1\157\14\27\24\0\3\27\5\0\6\27"+
-    "\3\0\3\27\1\160\17\27\24\0\3\27\5\0\6\27"+
-    "\3\0\17\27\1\161\3\27\40\0\1\162\53\0\3\27"+
-    "\5\0\6\27\3\0\3\27\1\163\17\27\24\0\3\27"+
-    "\5\0\6\27\3\0\15\27\1\164\5\27\24\0\3\27"+
-    "\5\0\6\27\3\0\13\27\1\165\7\27\24\0\3\27"+
-    "\5\0\6\27\3\0\12\27\1\166\10\27\24\0\3\27"+
-    "\5\0\6\27\3\0\12\27\1\167\10\27\24\0\2\27"+
-    "\1\170\5\0\6\27\3\0\23\27\62\0\1\171\31\0"+
-    "\3\27\5\0\6\27\3\0\2\27\1\172\20\27\24\0"+
-    "\3\27\5\0\6\27\3\0\12\27\1\173\10\27\24\0"+
-    "\3\27\5\0\6\27\3\0\12\27\1\174\10\27\24\0"+
-    "\3\27\5\0\6\27\3\0\5\27\1\175\15\27\24\0"+
-    "\3\27\5\0\6\27\3\0\20\27\1\176\2\27\24\0"+
-    "\1\27\1\177\1\27\5\0\6\27\3\0\23\27\53\0"+
-    "\1\200\40\0\3\27\5\0\6\27\3\0\17\27\1\201"+
-    "\3\27\24\0\3\27\5\0\6\27\3\0\21\27\1\202"+
-    "\1\27\24\0\3\27\5\0\6\27\3\0\3\27\1\203"+
-    "\17\27\57\0\1\204\32\0\1\205\1\0\3\27\5\0"+
-    "\6\27\3\0\23\27\22\0\1\206\1\0\3\27\5\0"+
-    "\6\27\3\0\23\27\64\0\1\207\44\0\1\210\62\0"+
-    "\1\211\3\0\1\212\104\0\1\213\101\0\1\214\64\0"+
-    "\1\215\50\0\1\216\101\0\1\217\71\0\1\220\66\0"+
-    "\1\221\71\0\1\222\55\0\1\223\72\0\1\224\77\0"+
-    "\1\225\43\0\1\226\100\0\1\227\70\0\1\230\54\0"+
-    "\1\231\106\0\1\232\72\0\1\233\54\0\1\234\106\0"+
-    "\1\235\6\0";
+    "\1\22\1\23\1\24\1\25\1\26\6\27\1\2\1\27"+
+    "\1\30\1\31\1\32\1\33\1\27\1\34\3\27\1\35"+
+    "\2\27\1\36\1\37\1\40\1\27\1\41\1\27\1\42"+
+    "\1\43\1\44\67\0\3\3\111\0\1\45\36\0\2\46"+
+    "\2\0\1\46\1\47\31\46\1\50\26\46\7\0\1\51"+
+    "\56\0\2\52\2\0\4\52\1\0\26\52\1\53\26\52"+
+    "\14\0\1\54\12\0\1\55\54\0\1\56\10\0\1\57"+
+    "\51\0\1\60\4\0\1\61\64\0\1\62\1\0\3\21"+
+    "\71\0\1\63\65\0\1\64\65\0\1\65\65\0\1\66"+
+    "\57\0\3\27\5\0\6\27\1\0\23\27\24\0\3\27"+
+    "\5\0\6\27\1\0\13\27\1\67\1\27\1\70\5\27"+
+    "\24\0\3\27\5\0\6\27\1\0\13\27\1\71\7\27"+
+    "\24\0\3\27\5\0\6\27\1\0\10\27\1\72\12\27"+
+    "\24\0\3\27\5\0\6\27\1\0\1\73\7\27\1\74"+
+    "\1\75\1\27\1\76\4\27\1\77\2\27\24\0\3\27"+
+    "\5\0\6\27\1\0\4\27\1\100\5\27\1\101\10\27"+
+    "\24\0\3\27\5\0\6\27\1\0\6\27\1\102\14\27"+
+    "\24\0\3\27\5\0\6\27\1\0\3\27\1\103\14\27"+
+    "\1\104\2\27\24\0\3\27\5\0\6\27\1\0\17\27"+
+    "\1\105\3\27\24\0\3\27\5\0\6\27\1\0\15\27"+
+    "\1\106\5\27\24\0\3\27\5\0\6\27\1\0\1\107"+
+    "\22\27\67\0\1\110\3\0\1\46\2\0\1\46\31\0"+
+    "\1\46\15\0\1\46\1\0\1\46\16\0\1\111\57\0"+
+    "\1\52\5\0\1\52\26\0\1\52\15\0\1\52\1\0"+
+    "\1\52\6\0\13\60\1\112\52\60\2\61\2\0\62\61"+
+    "\21\0\3\113\63\0\3\27\5\0\6\27\1\0\13\27"+
+    "\1\114\7\27\24\0\3\27\5\0\6\27\1\0\3\27"+
+    "\1\115\17\27\24\0\3\27\5\0\6\27\1\0\12\27"+
+    "\1\116\10\27\24\0\3\27\5\0\6\27\1\0\16\27"+
+    "\1\117\4\27\24\0\3\27\5\0\6\27\1\0\10\27"+
+    "\1\120\12\27\24\0\3\27\5\0\6\27\1\0\13\27"+
+    "\1\121\7\27\24\0\3\27\5\0\6\27\1\0\17\27"+
+    "\1\122\3\27\24\0\3\27\5\0\6\27\1\0\15\27"+
+    "\1\123\5\27\24\0\3\27\5\0\6\27\1\0\12\27"+
+    "\1\124\10\27\24\0\3\27\5\0\6\27\1\0\17\27"+
+    "\1\125\3\27\24\0\3\27\5\0\6\27\1\0\10\27"+
+    "\1\126\12\27\24\0\3\27\5\0\6\27\1\0\4\27"+
+    "\1\127\12\27\1\130\3\27\24\0\3\27\5\0\6\27"+
+    "\1\0\12\27\1\131\10\27\24\0\3\27\5\0\6\27"+
+    "\1\0\15\27\1\132\5\27\24\0\3\27\5\0\6\27"+
+    "\1\0\20\27\1\133\2\27\24\0\3\27\5\0\6\27"+
+    "\1\0\15\27\1\134\5\27\3\0\13\60\1\112\4\60"+
+    "\1\135\45\60\21\0\3\27\5\0\6\27\1\0\10\27"+
+    "\1\136\12\27\24\0\3\27\5\0\6\27\1\0\1\137"+
+    "\22\27\24\0\3\27\5\0\6\27\1\0\17\27\1\140"+
+    "\3\27\24\0\3\27\5\0\6\27\1\0\3\27\1\141"+
+    "\17\27\24\0\3\27\5\0\6\27\1\0\16\27\1\142"+
+    "\4\27\24\0\3\27\5\0\6\27\1\0\1\143\22\27"+
+    "\22\0\1\144\1\0\3\27\5\0\6\27\1\0\23\27"+
+    "\24\0\3\27\5\0\6\27\1\0\2\27\1\145\20\27"+
+    "\24\0\3\27\5\0\6\27\1\0\10\27\1\146\12\27"+
+    "\24\0\3\27\5\0\6\27\1\0\20\27\1\147\2\27"+
+    "\24\0\3\27\5\0\6\27\1\0\3\27\1\150\17\27"+
+    "\24\0\3\27\5\0\6\27\1\0\2\27\1\151\3\27"+
+    "\1\152\14\27\24\0\3\27\5\0\6\27\1\0\3\27"+
+    "\1\153\17\27\24\0\3\27\5\0\6\27\1\0\7\27"+
+    "\1\154\13\27\24\0\3\27\5\0\6\27\1\0\6\27"+
+    "\1\155\14\27\24\0\3\27\5\0\6\27\1\0\3\27"+
+    "\1\156\17\27\24\0\3\27\5\0\6\27\1\0\17\27"+
+    "\1\157\3\27\40\0\1\160\51\0\3\27\5\0\6\27"+
+    "\1\0\3\27\1\161\17\27\24\0\3\27\5\0\6\27"+
+    "\1\0\15\27\1\162\5\27\24\0\3\27\5\0\6\27"+
+    "\1\0\13\27\1\163\7\27\24\0\3\27\5\0\6\27"+
+    "\1\0\12\27\1\164\10\27\24\0\3\27\5\0\6\27"+
+    "\1\0\12\27\1\165\10\27\24\0\2\27\1\166\5\0"+
+    "\6\27\1\0\23\27\60\0\1\167\31\0\3\27\5\0"+
+    "\6\27\1\0\2\27\1\170\20\27\24\0\3\27\5\0"+
+    "\6\27\1\0\12\27\1\171\10\27\24\0\3\27\5\0"+
+    "\6\27\1\0\12\27\1\172\10\27\24\0\3\27\5\0"+
+    "\6\27\1\0\5\27\1\173\15\27\24\0\3\27\5\0"+
+    "\6\27\1\0\20\27\1\174\2\27\24\0\1\27\1\175"+
+    "\1\27\5\0\6\27\1\0\23\27\51\0\1\176\40\0"+
+    "\3\27\5\0\6\27\1\0\17\27\1\177\3\27\24\0"+
+    "\3\27\5\0\6\27\1\0\21\27\1\200\1\27\24\0"+
+    "\3\27\5\0\6\27\1\0\3\27\1\201\17\27\55\0"+
+    "\1\202\32\0\1\203\1\0\3\27\5\0\6\27\1\0"+
+    "\23\27\22\0\1\204\1\0\3\27\5\0\6\27\1\0"+
+    "\23\27\62\0\1\205\44\0\1\206\60\0\1\207\3\0"+
+    "\1\210\100\0\1\211\77\0\1\212\62\0\1\213\46\0"+
+    "\1\214\77\0\1\215\67\0\1\216\64\0\1\217\67\0"+
+    "\1\220\53\0\1\221\70\0\1\222\75\0\1\223\43\0"+
+    "\1\224\74\0\1\225\66\0\1\226\54\0\1\227\102\0"+
+    "\1\230\70\0\1\231\52\0\1\232\104\0\1\233\6\0";
 
   private static int [] zzUnpacktrans() {
-    int [] result = new int[6160];
+    int [] result = new int[5940];
     int offset = 0;
     offset = zzUnpacktrans(ZZ_TRANS_PACKED_0, offset, result);
     return result;
@@ -317,15 +316,14 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
 
   private static final String ZZ_ATTRIBUTE_PACKED_0 =
     "\1\0\1\11\3\1\1\11\2\1\3\11\1\1\1\11"+
-    "\1\1\1\11\3\1\1\11\4\1\2\11\12\1\1\11"+
-    "\1\1\2\11\1\0\1\11\1\0\1\11\2\0\4\11"+
-    "\1\0\1\1\1\0\4\11\21\1\2\11\1\0\22\1"+
-    "\1\11\6\1\1\0\13\1\1\0\6\1\1\0\6\1"+
-    "\1\0\3\1\13\0\1\11\4\0\1\11\3\0\1\11"+
-    "\4\0\1\11";
+    "\1\1\1\11\3\1\1\11\16\1\1\11\1\1\2\11"+
+    "\1\0\1\11\1\0\1\11\2\0\4\11\1\0\1\1"+
+    "\1\0\4\11\21\1\2\11\1\0\22\1\1\11\6\1"+
+    "\1\0\13\1\1\0\6\1\1\0\6\1\1\0\3\1"+
+    "\13\0\1\11\4\0\1\11\3\0\1\11\4\0\1\11";
 
   private static int [] zzUnpackAttribute() {
-    int [] result = new int[157];
+    int [] result = new int[155];
     int offset = 0;
     offset = zzUnpackAttribute(ZZ_ATTRIBUTE_PACKED_0, offset, result);
     return result;
@@ -406,6 +404,10 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
     public static List<TokenReporte> listaTokens  = new ArrayList<>();
     public static List<ErrorLexico>  listaErrores = new ArrayList<>();
 
+    // Cuando es false, el lexer NO registra tokens ni errores en las listas.
+    // Se usa para la pasada del parser, evitando duplicar el reporte léxico.
+    public static boolean registrar = true;
+
     /**
      * Crea el Symbol para CUP, registra el token en la lista de reporte
      * y lo retorna. Usa yyline+1 / yycolumn+1 para base-1.
@@ -413,7 +415,9 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
     private Symbol token(int tipo, Object valor) {
         int lin = yyline + 1;
         int col = yycolumn + 1;
-        listaTokens.add(new TokenReporte(yytext(), SymUtils.nombreTipo(tipo), lin, col));
+        if (registrar) {
+            listaTokens.add(new TokenReporte(yytext(), SymUtils.nombreTipo(tipo), lin, col));
+        }
         return new Symbol(tipo, lin, col, valor);
     }
 
@@ -421,13 +425,14 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
         return token(tipo, yytext());
     }
 
-    /** Registra un error léxico sin detener el análisis. */
     private void errorLexico() {
         int lin = yyline + 1;
         int col = yycolumn + 1;
         String msg = "El símbolo \"" + yytext() + "\" no es aceptado en el lenguaje.";
-        listaErrores.add(new ErrorLexico(msg, lin, col));
-        System.err.println("[Error Léxico] Línea " + lin + ", Columna " + col + ": " + msg);
+        if (registrar) {
+            listaErrores.add(new ErrorLexico(msg, lin, col));
+            Errores.agregarLexico(msg, lin, col);
+        }
     }
 
 
@@ -858,294 +863,274 @@ public class GoliteLexer implements java_cup.runtime.Scanner {
             { errorLexico();
             }
           // fall through
-          case 59: break;
+          case 55: break;
           case 2:
-            { /* espacios en blanco: ignorar */
+            { /* ignorar */
+            }
+          // fall through
+          case 56: break;
+          case 3:
+            { return token(sym.NO);
+            }
+          // fall through
+          case 57: break;
+          case 4:
+            { return token(sym.MODULO);
+            }
+          // fall through
+          case 58: break;
+          case 5:
+            { return token(sym.PAR_IZQ);
+            }
+          // fall through
+          case 59: break;
+          case 6:
+            { return token(sym.PAR_DER);
             }
           // fall through
           case 60: break;
-          case 3:
-            { return token(sym.NOT);
+          case 7:
+            { return token(sym.POR);
             }
           // fall through
           case 61: break;
-          case 4:
-            { return token(sym.MOD);
+          case 8:
+            { return token(sym.MAS);
             }
           // fall through
           case 62: break;
-          case 5:
-            { return token(sym.LPAREN);
+          case 9:
+            { return token(sym.COMA);
             }
           // fall through
           case 63: break;
-          case 6:
-            { return token(sym.RPAREN);
+          case 10:
+            { return token(sym.MENOS);
             }
           // fall through
           case 64: break;
-          case 7:
-            { return token(sym.TIMES);
+          case 11:
+            { return token(sym.PUNTO);
             }
           // fall through
           case 65: break;
-          case 8:
-            { return token(sym.PLUS);
+          case 12:
+            { return token(sym.ENTRE);
             }
           // fall through
           case 66: break;
-          case 9:
-            { return token(sym.COMMA);
+          case 13:
+            { return token(sym.LITERAL_ENTERO,   Integer.parseInt(yytext()));
             }
           // fall through
           case 67: break;
-          case 10:
-            { return token(sym.MINUS);
+          case 14:
+            { return token(sym.PUNTO_COMA);
             }
           // fall through
           case 68: break;
-          case 11:
-            { return token(sym.DOT);
+          case 15:
+            { return token(sym.MENOR);
             }
           // fall through
           case 69: break;
-          case 12:
-            { return token(sym.DIVIDE);
+          case 16:
+            { return token(sym.ASIGNAR);
             }
           // fall through
           case 70: break;
-          case 13:
-            { return token(sym.INT_LITERAL,   Integer.parseInt(yytext()));
+          case 17:
+            { return token(sym.MAYOR);
             }
           // fall through
           case 71: break;
-          case 14:
-            { return token(sym.SEMICOLON);
+          case 18:
+            { return token(sym.IDENTIFICADOR, yytext());
             }
           // fall through
           case 72: break;
-          case 15:
-            { return token(sym.LT);
+          case 19:
+            { return token(sym.LLAVE_IZQ);
             }
           // fall through
           case 73: break;
-          case 16:
-            { return token(sym.ASSIGN);
+          case 20:
+            { return token(sym.LLAVE_DER);
             }
           // fall through
           case 74: break;
-          case 17:
-            { return token(sym.GT);
+          case 21:
+            { return token(sym.DIFERENTE);
             }
           // fall through
           case 75: break;
-          case 18:
-            { return token(sym.IDENTIFIER, yytext());
+          case 22:
+            { // Guardamos el texto sin las comillas externas
+                                 String val = yytext().substring(1, yytext().length() - 1);
+                                 return token(sym.LITERAL_CADENA, val);
             }
           // fall through
           case 76: break;
-          case 19:
-            { return token(sym.LBRACKET);
+          case 23:
+            { return token(sym.Y);
             }
           // fall through
           case 77: break;
-          case 20:
-            { return token(sym.RBRACKET);
+          case 24:
+            { return token(sym.INCREMENTO);
             }
           // fall through
           case 78: break;
-          case 21:
-            { return token(sym.LBRACE);
+          case 25:
+            { return token(sym.MAS_ASIGNAR);
             }
           // fall through
           case 79: break;
-          case 22:
-            { return token(sym.RBRACE);
+          case 26:
+            { return token(sym.DECREMENTO);
             }
           // fall through
           case 80: break;
-          case 23:
-            { return token(sym.NE);
+          case 27:
+            { return token(sym.MENOS_ASIGNAR);
             }
           // fall through
           case 81: break;
-          case 24:
-            { // Guardamos el texto sin las comillas externas
-                                 String val = yytext().substring(1, yytext().length() - 1);
-                                 return token(sym.STRING_LITERAL, val);
+          case 28:
+            { return token(sym.DEFINIR);
             }
           // fall through
           case 82: break;
-          case 25:
-            { return token(sym.AND);
+          case 29:
+            { return token(sym.MENOR_IGUAL);
             }
           // fall through
           case 83: break;
-          case 26:
-            { return token(sym.INC);
+          case 30:
+            { return token(sym.IGUAL);
             }
           // fall through
           case 84: break;
-          case 27:
-            { return token(sym.PLUS_ASSIGN);
+          case 31:
+            { return token(sym.MAYOR_IGUAL);
             }
           // fall through
           case 85: break;
-          case 28:
-            { return token(sym.DEC);
+          case 32:
+            { return token(sym.SI);
             }
           // fall through
           case 86: break;
-          case 29:
-            { return token(sym.MINUS_ASSIGN);
+          case 33:
+            { return token(sym.O);
             }
           // fall through
           case 87: break;
-          case 30:
-            { /* comentario de línea: ignorar */
+          case 34:
+            { return token(sym.LITERAL_RUNA, yytext());
             }
           // fall through
           case 88: break;
-          case 31:
-            { return token(sym.DEFINE);
+          case 35:
+            { return token(sym.LITERAL_FLOTANTE, Double.parseDouble(yytext()));
             }
           // fall through
           case 89: break;
-          case 32:
-            { return token(sym.LE);
+          case 36:
+            { return token(sym.PARA);
             }
           // fall through
           case 90: break;
-          case 33:
-            { return token(sym.EQ);
+          case 37:
+            { return token(sym.TIPO_ENTERO);
             }
           // fall through
           case 91: break;
-          case 34:
-            { return token(sym.GE);
+          case 38:
+            { return token(sym.NULO);
             }
           // fall through
           case 92: break;
-          case 35:
-            { return token(sym.IF);
+          case 39:
+            { return token(sym.VARIABLE);
             }
           // fall through
           case 93: break;
-          case 36:
-            { return token(sym.OR);
+          case 40:
+            { return token(sym.TIPO_BOOLEANO);
             }
           // fall through
           case 94: break;
-          case 37:
-            { return token(sym.RUNE_LITERAL, yytext());
+          case 41:
+            { return token(sym.SINO);
             }
           // fall through
           case 95: break;
-          case 38:
-            { return token(sym.FLOAT_LITERAL, Double.parseDouble(yytext()));
+          case 42:
+            { return token(sym.FUNCION);
             }
           // fall through
           case 96: break;
-          case 39:
-            { return token(sym.FOR);
+          case 43:
+            { return token(sym.TIPO_RUNA);
             }
           // fall through
           case 97: break;
-          case 40:
-            { return token(sym.INT_TYPE);
+          case 44:
+            { return token(sym.LITERAL_BOOLEANO, true);
             }
           // fall through
           case 98: break;
-          case 41:
-            { return token(sym.NIL);
+          case 45:
+            { return token(sym.ROMPER);
             }
           // fall through
           case 99: break;
-          case 42:
-            { return token(sym.VAR);
+          case 46:
+            { return token(sym.LITERAL_BOOLEANO, false);
             }
           // fall through
           case 100: break;
-          case 43:
-            { /* comentario bloque: ignorar  */
+          case 47:
+            { return token(sym.RETORNAR);
             }
           // fall through
           case 101: break;
-          case 44:
-            { return token(sym.BOOL_TYPE);
+          case 48:
+            { return token(sym.TIPO_CADENA);
             }
           // fall through
           case 102: break;
-          case 45:
-            { return token(sym.ELSE);
+          case 49:
+            { return token(sym.TIPO_FLOTANTE);
             }
           // fall through
           case 103: break;
-          case 46:
-            { return token(sym.FUNC);
+          case 50:
+            { return token(sym.CONTINUAR);
             }
           // fall through
           case 104: break;
-          case 47:
-            { return token(sym.RUNE_TYPE);
+          case 51:
+            { return token(sym.IMPRIMIR);
             }
           // fall through
           case 105: break;
-          case 48:
-            { return token(sym.BOOL_LITERAL, true);
+          case 52:
+            { return token(sym.A_ENTERO);
             }
           // fall through
           case 106: break;
-          case 49:
-            { return token(sym.BREAK);
+          case 53:
+            { return token(sym.TIPO_DE);
             }
           // fall through
           case 107: break;
-          case 50:
-            { return token(sym.BOOL_LITERAL, false);
+          case 54:
+            { return token(sym.A_FLOTANTE);
             }
           // fall through
           case 108: break;
-          case 51:
-            { return token(sym.RETURN);
-            }
-          // fall through
-          case 109: break;
-          case 52:
-            { return token(sym.STRING_TYPE);
-            }
-          // fall through
-          case 110: break;
-          case 53:
-            { return token(sym.FLOAT_TYPE);
-            }
-          // fall through
-          case 111: break;
-          case 54:
-            { return token(sym.CONTINUE);
-            }
-          // fall through
-          case 112: break;
-          case 55:
-            { return token(sym.PRINTLN);
-            }
-          // fall through
-          case 113: break;
-          case 56:
-            { return token(sym.ATOI);
-            }
-          // fall through
-          case 114: break;
-          case 57:
-            { return token(sym.TYPEOF);
-            }
-          // fall through
-          case 115: break;
-          case 58:
-            { return token(sym.PARSEFLOAT);
-            }
-          // fall through
-          case 116: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

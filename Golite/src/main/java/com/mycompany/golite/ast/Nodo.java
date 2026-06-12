@@ -2,8 +2,6 @@ package com.mycompany.golite.ast;
 
 /**
  * Clase base abstracta para todos los nodos del AST.
- * Cada nodo guarda la línea y columna donde apareció en el código fuente,
- * útil para mensajes de error con ubicación exacta.
  */
 public abstract class Nodo {
 
@@ -25,7 +23,7 @@ public abstract class Nodo {
 
     /**
      * Método que el Interprete llamará para ejecutar/evaluar este nodo.
-     * Cada subclase implementa su lógica, por cierto son un chingo xd
+     * Cada subclase implementa su lógica, que para este proyecto salieron muchas
      *
      * @param entorno el entorno de ejecución actual 
      * @return el valor resultado de evaluar este nodo, o null si no retorna nada

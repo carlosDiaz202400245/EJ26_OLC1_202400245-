@@ -14,9 +14,9 @@ public class NodoAtoi extends Nodo {
     public Nodo expresion;
 
     /**
-     * @param expresion expresión de tipo string
+     * @param expresion expresion de tipo string
      * @param linea     línea en el código fuente
-     * @param columna   columna en el código fuente
+     * @param columna   columna en el codigo fuente
      */
     public NodoAtoi(Nodo expresion, int linea, int columna) {
         super(linea, columna);

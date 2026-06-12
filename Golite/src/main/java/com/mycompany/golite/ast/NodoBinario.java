@@ -1,14 +1,6 @@
 package com.mycompany.golite.ast;
 
-/**
- * Nodo que representa una operación binaria.
- *
- * Operaciones aritméticas : +  -  *  /  %
- * Operaciones de comparación: ==  !=  <  <=  >  >=
- * Operaciones lógicas     : &&  ||
- *
- * Ejemplos: 1 + 2,  x > 5,  a && b,  "ho" + "la"
- */
+/** Nodo que representa una operación binaria. */
 public class NodoBinario extends Nodo {
 
     /** Operando izquierdo */
@@ -20,13 +12,6 @@ public class NodoBinario extends Nodo {
     /** Operando derecho */
     public Nodo derecha;
 
-    /**
-     * @param izquierda operando izquierdo
-     * @param operador  operador como string
-     * @param derecha   operando derecho
-     * @param linea     línea en el código fuente
-     * @param columna   columna en el código fuente
-     */
     public NodoBinario(Nodo izquierda, String operador, Nodo derecha,
                        int linea, int columna) {
         super(linea, columna);
@@ -35,10 +20,7 @@ public class NodoBinario extends Nodo {
         this.derecha   = derecha;
     }
 
-    /**
-     * Evalúa ambos operandos y aplica el operador.
-     * Maneja conversión implícita int → float64 según el enunciado.
-     */
+    /** Evalúa ambos operandos y aplica el operador (con conversión implícita int → float64). */
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
         Object valIzq = izquierda.ejecutar(entorno);
@@ -73,10 +55,7 @@ public class NodoBinario extends Nodo {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // SUMA
-    // int+int=int  int+float=float  float+float=float  string+string=string
-    // ─────────────────────────────────────────────────────────────────
+    // ─── SUMA ──────────────────────────────────────────────────────────
     private Object opSuma(Object izq, Object der) {
         // Concatenación de strings
         if (izq instanceof String && der instanceof String) {
@@ -92,9 +71,7 @@ public class NodoBinario extends Nodo {
         throw new RuntimeException(errorTipo("+", izq, der));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // RESTA
-    // ─────────────────────────────────────────────────────────────────
+    // ─── RESTA ─────────────────────────────────────────────────────────
     private Object opResta(Object izq, Object der) {
         if (esNumerico(izq) && esNumerico(der)) {
             if (izq instanceof Double || der instanceof Double) {
@@ -105,9 +82,7 @@ public class NodoBinario extends Nodo {
         throw new RuntimeException(errorTipo("-", izq, der));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // MULTIPLICACIÓN
-    // ─────────────────────────────────────────────────────────────────
+    // ─── MULTIPLICACIÓN ────────────────────────────────────────────────
     private Object opMulti(Object izq, Object der) {
         if (esNumerico(izq) && esNumerico(der)) {
             if (izq instanceof Double || der instanceof Double) {
@@ -118,9 +93,7 @@ public class NodoBinario extends Nodo {
         throw new RuntimeException(errorTipo("*", izq, der));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // DIVISIÓN
-    // ─────────────────────────────────────────────────────────────────
+    // ─── DIVISIÓN ──────────────────────────────────────────────────────
     private Object opDiv(Object izq, Object der) {
         if (esNumerico(izq) && esNumerico(der)) {
             // Verificar división por cero
@@ -145,9 +118,7 @@ public class NodoBinario extends Nodo {
         throw new RuntimeException(errorTipo("/", izq, der));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // MÓDULO — solo int % int
-    // ─────────────────────────────────────────────────────────────────
+    // ─── MÓDULO (solo int % int) ───────────────────────────────────────
     private Object opMod(Object izq, Object der) {
         if (izq instanceof Integer && der instanceof Integer) {
             if (toInt(der) == 0) {
@@ -164,9 +135,7 @@ public class NodoBinario extends Nodo {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // IGUALDAD / DESIGUALDAD
-    // ─────────────────────────────────────────────────────────────────
+    // ─── IGUALDAD / DESIGUALDAD ────────────────────────────────────────
     private Object opIgualdad(Object izq, Object der, boolean esIgual) {
         boolean resultado;
 
@@ -193,9 +162,7 @@ public class NodoBinario extends Nodo {
         return esIgual ? resultado : !resultado;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // RELACIONALES:  <  <=  >  >=
-    // ─────────────────────────────────────────────────────────────────
+    // ─── RELACIONALES (< <= > >=) ──────────────────────────────────────
     private Object opRelacional(Object izq, Object der, String op) {
         // Numérico
         if (esNumerico(izq) && esNumerico(der)) {
@@ -222,9 +189,7 @@ public class NodoBinario extends Nodo {
         throw new RuntimeException(errorTipo(op, izq, der));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // AND / OR — ambos operandos deben ser bool
-    // ─────────────────────────────────────────────────────────────────
+    // ─── AND / OR (ambos operandos deben ser bool) ─────────────────────
     private Object opAnd(Object izq, Object der) {
         if (izq instanceof Boolean && der instanceof Boolean) {
             return (Boolean) izq && (Boolean) der;
@@ -245,16 +210,14 @@ public class NodoBinario extends Nodo {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // UTILIDADES
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDADES ────────────────────────────────────────────────────
 
-    /** true si el valor es Integer o Double */
+    /** true si el valor es Integer o Double. */
     private boolean esNumerico(Object v) {
         return v instanceof Integer || v instanceof Double;
     }
 
-    /** true si el valor es un rune (String de longitud 1 entre comillas simples) */
+    /** true si el valor es un rune (String entre comillas simples). */
     private boolean esRune(Object v) {
         return v instanceof String && ((String) v).startsWith("'")
                && ((String) v).endsWith("'");

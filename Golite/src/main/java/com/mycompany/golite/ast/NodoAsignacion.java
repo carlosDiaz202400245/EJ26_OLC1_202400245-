@@ -3,29 +3,18 @@ package com.mycompany.golite.ast;
 import com.mycompany.golite.Entorno;
 
 /**
- * Reglas del enunciado:
- *   - La variable debe existir previamente sin o error semantico
- *   - El nuevo valor debe ser del mismo tipo que el declarado
- *   - Única excepcion: se puede asignar int a una variable float64
+ * Nodo de asignación. La variable debe existir, y el nuevo valor debe coincidir
+ * con su tipo declarado; única excepción: int → float64.
  */
 public class NodoAsignacion extends Nodo {
 
-    /** Nombre de la variable a asignar */
     public String nombre;
 
     /** Operador: "=", "+=", "-=" */
     public String operador;
 
-    /** Expresion con el nuevo valor */
     public Nodo expresion;
 
-    /**
-     * @param nombre    nombre de la variable
-     * @param operador  =, += o -=
-     * @param expresion expresion del nuevo valor
-     * @param linea     lonea en el código fuente
-     * @param columna   columna en el código fuente
-     */
     public NodoAsignacion(String nombre, String operador, Nodo expresion,
                           int linea, int columna) {
         super(linea, columna);
@@ -37,7 +26,7 @@ public class NodoAsignacion extends Nodo {
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
 
-        // Verificar que la variable existe en algún scope
+        // La variable debe existir en algún scope
         if (!entorno.existe(nombre)) {
             throw new RuntimeException(
                 "[Error Semántico] Línea " + linea + ", Columna " + columna
@@ -45,36 +34,25 @@ public class NodoAsignacion extends Nodo {
             );
         }
 
-        // Obtener valor y tipo actuales de la variable
         Object valorActual = entorno.obtener(nombre);
         String tipoActual  = entorno.obtenerTipo(nombre);
+        Object valorNuevo  = expresion.ejecutar(entorno);
 
-        // Evaluar la expresión del lado derecho
-        Object valorNuevo = expresion.ejecutar(entorno);
-
-        // Aplicar el operador
         Object resultado = aplicarOperador(valorActual, valorNuevo, tipoActual);
-
-        // Verificar compatibilidad de tipos antes de asignar
-        resultado = verificarTipo(resultado, tipoActual);
-
-        // Actualizar el valor en el entorno
+        resultado = verificarTipo(resultado, tipoActual);   // valida tipo antes de asignar
         entorno.asignar(nombre, resultado);
 
-        return null; 
+        return null;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // aplicar operador
-    // ─────────────────────────────────────────────────────────────────
+    // ─── APLICAR OPERADOR ──────────────────────────────────────────────
     private Object aplicarOperador(Object actual, Object nuevo, String tipo) {
         switch (operador) {
             case "=":
-                // Asignación simple, el nuevo valor se verifica después
-                return nuevo;
+                return nuevo;   // asignación simple; el tipo se verifica después
 
             case "+=":
-                // Suma implícita: variable = variable + expresión
+                // variable = variable + expresión
                 if (actual instanceof Integer && nuevo instanceof Integer) {
                     return (Integer) actual + (Integer) nuevo;
                 }
@@ -92,7 +70,7 @@ public class NodoAsignacion extends Nodo {
                 );
 
             case "-=":
-                // Resta implícita: variable = variable - expresión
+                // variable = variable - expresión
                 if (actual instanceof Integer && nuevo instanceof Integer) {
                     return (Integer) actual - (Integer) nuevo;
                 }
@@ -112,9 +90,7 @@ public class NodoAsignacion extends Nodo {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // compatibilidad de tipos
-    // ─────────────────────────────────────────────────────────────────
+    // ─── COMPATIBILIDAD DE TIPOS ───────────────────────────────────────
     private Object verificarTipo(Object valor, String tipoDeclarado) {
         switch (tipoDeclarado) {
             case "int":
@@ -165,14 +141,11 @@ public class NodoAsignacion extends Nodo {
                 );
 
             default:
-                // Tipo compuesto aceptadp
-                return valor;
+                return valor;   // tipo compuesto: se acepta
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // utilidades
-    // ─────────────────────────────────────────────────────────────────
+    // ─── UTILIDADES ────────────────────────────────────────────────────
     private boolean esNumerico(Object v) {
         return v instanceof Integer || v instanceof Double;
     }
