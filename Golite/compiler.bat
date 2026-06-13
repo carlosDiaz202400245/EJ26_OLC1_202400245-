@@ -1,16 +1,17 @@
 @echo off
 chcp 65001 >nul
 
-echo         fase 1 en compilacion          
+:: Posicionarse en la carpeta de este .bat para que las rutas relativas funcionen
+cd /d "%~dp0"
 
+echo         fase 1 en compilacion
 
-
-:: ─── RUTAS DE DEPENDENCIAS: lo puse mejor asi por que no tengo bien configuradp ─────────
+:: === RUTAS DE DEPENDENCIAS (ajusta si estan en otra carpeta) ===
 set CUP_JAR=C:\Users\charl\Desktop\Dependencias\java-cup-11b-20160615.jar
 set CUP_RT=C:\Users\charl\Desktop\Dependencias\java-cup-runtime-11b-20160615.jar
 set JFLEX_JAR=C:\Users\charl\Desktop\Dependencias\jflex-1.9.1\lib\jflex-full-1.9.1.jar
 
-:: ─── RUTAS DEL PROYECTO  ────────
+:: === RUTAS DEL PROYECTO ===
 set SRC=src\main\java
 set CUP_SRC=src\main\cup\golite.cup
 set FLEX_SRC=src\main\jflex\golite.flex
@@ -19,9 +20,7 @@ set LEXER_DIR=src\main\java\com\mycompany\golite
 set OUT=target\classes
 set MAIN=com.mycompany.golite.Golite
 
-:: ─────────────────────────────────────────────────────────────────────
-:: paso 1, limpiando por si hay una compilacion anterior
-:: ─────────────────────────────────────────────────────────────────────
+:: === [1/5] Limpiar compilacion anterior ===
 echo [1/5] Limpiando compilacion anterior...
 if exist %OUT% rmdir /s /q %OUT%
 mkdir %OUT%
@@ -33,10 +32,7 @@ if exist %LEXER_DIR%\GoliteLexer.java del /q %LEXER_DIR%\GoliteLexer.java
 echo     OK
 echo.
 
-
-:: ─────────────────────────────────────────────────────────────────────
-::  Crear carpeta del parser si no existe
-:: ─────────────────────────────────────────────────────────────────────
+:: === [2/5] Crear carpeta del parser si no existe ===
 if not exist %PARSER_DIR% (
     mkdir %PARSER_DIR%
     echo [2/5] Carpeta parser creada.
@@ -45,9 +41,7 @@ if not exist %PARSER_DIR% (
 )
 echo.
 
-:: ─────────────────────────────────────────────────────────────────────
-::  Compilar CUP 
-:: ─────────────────────────────────────────────────────────────────────
+:: === [3/5] Compilar CUP ===
 echo [3/5] Compilando CUP (golite.cup)...
 java -cp "%CUP_JAR%" java_cup.Main ^
     -package com.mycompany.golite.parser ^
@@ -65,9 +59,7 @@ if errorlevel 1 (
 echo     OK - parser.java y sym.java generados.
 echo.
 
-:: ─────────────────────────────────────────────────────────────────────
-::  Compilar JFlex 
-:: ─────────────────────────────────────────────────────────────────────
+:: === [4/5] Compilar JFlex ===
 echo [4/5] Compilando JFlex (golite.flex)...
 java -jar "%JFLEX_JAR%" ^
     -d %LEXER_DIR% ^
@@ -82,9 +74,7 @@ if errorlevel 1 (
 echo     OK - GoliteLexer.java generado.
 echo.
 
-:: ─────────────────────────────────────────────────────────────────────
-:: Compilar todo el Java
-:: ─────────────────────────────────────────────────────────────────────
+:: === [5/5] Compilar todo el Java ===
 echo [5/5] Compilando Java...
 javac -encoding UTF-8 ^
     -cp "%CUP_RT%" ^
@@ -103,9 +93,7 @@ if errorlevel 1 (
 echo     OK - Compilacion exitosa.
 echo.
 
-
-
-echo           INICIANDO GOLITE IDE...            
+echo           INICIANDO GOLITE IDE...
 
 java -cp "%OUT%;%CUP_RT%" %MAIN%
 
