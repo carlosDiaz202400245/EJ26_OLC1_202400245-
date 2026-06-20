@@ -1,0 +1,316 @@
+package com.mycompany.golite.parser;
+
+import java_cup.runtime.*;
+import com.mycompany.golite.Errores;
+import com.mycompany.golite.ErrorSintactico;
+import com.mycompany.golite.ast.*;
+import java.util.ArrayList;
+
+parser code {:
+    public static java.util.ArrayList<ErrorSintactico> erroresSintacticos = new java.util.ArrayList<>();
+
+    @Override
+    public void syntax_error(Symbol s) {
+        String msg = "Token inesperado -> '" + s.value + "'";
+        ErrorSintactico err = new ErrorSintactico(msg, s.left, s.right);
+        erroresSintacticos.add(err);
+        Errores.agregarSintactico(msg, s.left, s.right);
+    }
+
+    @Override
+    public void unrecovered_syntax_error(Symbol s) throws Exception {
+        String msg = "Error irrecuperable -> '" + s.value + "'";
+        ErrorSintactico err = new ErrorSintactico(msg, s.left, s.right);
+        erroresSintacticos.add(err);
+        Errores.agregarSintactico(msg, s.left, s.right);
+    }
+:}
+
+/* ── TERMINALES ─────────────────────────────────────────────────────── */
+terminal            VARIABLE, FUNCION, SI, SINO, PARA, ROMPER, CONTINUAR, RETORNAR, NULO;
+terminal            TIPO_ENTERO, TIPO_FLOTANTE, TIPO_CADENA, TIPO_BOOLEANO, TIPO_RUNA;
+terminal            LITERAL_BOOLEANO;
+terminal Integer    LITERAL_ENTERO;
+terminal Double     LITERAL_FLOTANTE;
+terminal String     LITERAL_CADENA;
+terminal            LITERAL_RUNA;
+terminal String     IDENTIFICADOR;
+terminal            IMPRIMIR, A_ENTERO, A_FLOTANTE, TIPO_DE;
+terminal            ASIGNAR, DEFINIR, MAS_ASIGNAR, MENOS_ASIGNAR;
+terminal            INCREMENTO, DECREMENTO;
+terminal            MAS, MENOS, POR, ENTRE, MODULO, MENOS_UNARIO;
+terminal            IGUAL, DIFERENTE, MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL;
+terminal            Y, O, NO;
+terminal            PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER;
+terminal            COMA, PUNTO_COMA, PUNTO;
+
+/* ── NO TERMINALES (sin genéricos) ──────────────────────────────────── */
+non terminal ArrayList   program;
+non terminal ArrayList   decl_list;
+non terminal Nodo        decl;
+non terminal Nodo        func_decl;
+non terminal ArrayList   param_list;
+non terminal ArrayList   param_list_ne;
+non terminal Nodo        param;
+non terminal String      tipo;
+non terminal NodoBloque  bloque;
+non terminal ArrayList   stmt_list;
+non terminal Nodo        stmt;
+non terminal Nodo        var_decl;
+non terminal Nodo        asignacion;
+non terminal Nodo        if_stmt;
+non terminal Nodo        for_stmt;
+non terminal Nodo        for_init;
+non terminal Nodo        for_post;
+non terminal Nodo        llamada_funcion;
+non terminal ArrayList   arg_list;
+non terminal ArrayList   arg_list_ne;
+non terminal Nodo        llamada_embebida;
+non terminal Nodo        expr;
+non terminal ArrayList   expr_list;
+non terminal ArrayList   expr_list_ne;
+
+/* ── PRECEDENCIA ────────────────────────────────────────────────────── */
+
+precedence right    ASIGNAR, MAS_ASIGNAR, MENOS_ASIGNAR;
+precedence left     O;
+precedence left     Y;
+precedence left     IGUAL, DIFERENTE;
+precedence left     MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL;
+precedence left     MAS, MENOS;
+precedence left     POR, ENTRE, MODULO;
+precedence right    MENOS_UNARIO;
+precedence right    NO;
+precedence left     PAR_IZQ;
+
+start with program;
+
+/* ── REGLAS ─────────────────────────────────────────────────────────── */
+
+program
+    ::= decl_list:dl
+        {: RESULT = dl; :}
+    ;
+
+decl_list
+    ::= decl_list:dl decl:d
+        {: if (d != null) dl.add(d); RESULT = dl; :}
+    |   /* vacío */
+        {: RESULT = new ArrayList(); :}
+    ;
+
+decl
+    ::= func_decl:f  {: RESULT = f; :}
+    |   stmt:s       {: RESULT = s; :}
+    ;
+
+/* ── Tipos ──────────────────────────────────────────────────────────── */
+tipo
+    ::= TIPO_ENTERO        {: RESULT = "int";     :}
+    |   TIPO_FLOTANTE      {: RESULT = "float64"; :}
+    |   TIPO_CADENA     {: RESULT = "string";  :}
+    |   TIPO_BOOLEANO       {: RESULT = "bool";    :}
+    |   TIPO_RUNA       {: RESULT = "rune";    :}
+    |   IDENTIFICADOR:id   {: RESULT = id;        :}
+    ;
+
+/* ── Funciones ──────────────────────────────────────────────────────── */
+func_decl
+    ::= FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER bloque:b
+        {: RESULT = null; :}   // Fase 1: se reconoce la sintaxis pero NO se interpreta (las funciones son fase 2)
+    |   FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER tipo:t bloque:b
+        {: RESULT = null; :}   // Fase 1: idem, función con tipo de retorno
+    ;
+
+param_list
+    ::= param_list_ne:pl  {: RESULT = pl; :}
+    |   /* vacío */       {: RESULT = new ArrayList(); :}
+    ;
+
+param_list_ne
+    ::= param_list_ne:pl COMA param:p
+        {: pl.add(p); RESULT = pl; :}
+    |   param:p
+        {: ArrayList l = new ArrayList(); l.add(p); RESULT = l; :}
+    ;
+
+param
+    ::= IDENTIFICADOR:id tipo:t
+        {: RESULT = new NodoDeclVar(id, t, null, idleft, idright); :}
+    ;
+
+/* ── Bloque ─────────────────────────────────────────────────────────── */
+bloque
+    ::= LLAVE_IZQ:l stmt_list:sl LLAVE_DER
+        {: RESULT = new NodoBloque(sl, lleft, lright); :}
+    ;
+
+/* ── Lista de sentencias ────────────────────────────────────────────── */
+stmt_list
+    ::= stmt_list:sl stmt:s
+        {: if (s != null) sl.add(s); RESULT = sl; :}
+    |   /* vacío */
+        {: RESULT = new ArrayList(); :}
+    ;
+
+/* ── Sentencias ─────────────────────────────────────────────────────── */
+stmt
+    ::= bloque:b
+        {: RESULT = b; :}
+    |   var_decl:v
+        {: RESULT = v; :}
+    |   asignacion:a
+        {: RESULT = a; :}
+    |   IDENTIFICADOR:id INCREMENTO
+        {: RESULT = new NodoIncDec(id, "++", idleft, idright); :}
+    |   IDENTIFICADOR:id DECREMENTO
+        {: RESULT = new NodoIncDec(id, "--", idleft, idright); :}
+    |   llamada_funcion:lf
+        {: RESULT = lf; :}
+    |   llamada_embebida:le
+        {: RESULT = le; :}
+    |   if_stmt:i
+        {: RESULT = i; :}
+    |   for_stmt:f
+        {: RESULT = f; :}
+    |   ROMPER:b
+        {: RESULT = new NodoBreak(bleft, bright); :}
+    |   CONTINUAR:c
+        {: RESULT = new NodoContinue(cleft, cright); :}
+    |   RETORNAR:r expr:e
+        {: RESULT = null; :}
+    |   PUNTO_COMA
+        {: RESULT = null; :}
+    ;
+
+/* ── Variables ──────────────────────────────────────────────────────── */
+var_decl
+    ::= VARIABLE IDENTIFICADOR:id tipo:t
+        {: RESULT = new NodoDeclVar(id, t, null, idleft, idright); :}
+    |   VARIABLE IDENTIFICADOR:id tipo:t ASIGNAR expr:e
+        {: RESULT = new NodoDeclVar(id, t, e, idleft, idright); :}
+    |   VARIABLE IDENTIFICADOR:id ASIGNAR expr:e
+        {: RESULT = new NodoDeclVar(id, null, e, idleft, idright); :}
+    |   IDENTIFICADOR:id DEFINIR expr:e
+        {: RESULT = new NodoDeclVar(id, null, e, idleft, idright); :}
+    ;
+
+/* ── Asignación ─────────────────────────────────────────────────────── */
+asignacion
+    ::= IDENTIFICADOR:id ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "=", e, idleft, idright); :}
+    |   IDENTIFICADOR:id MAS_ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "+=", e, idleft, idright); :}
+    |   IDENTIFICADOR:id MENOS_ASIGNAR expr:e
+        {: RESULT = new NodoAsignacion(id, "-=", e, idleft, idright); :}
+    ;
+
+/* ── If ─────────────────────────────────────────────────────────────── */
+if_stmt
+    ::= SI:i expr:c bloque:b
+        {: RESULT = new NodoIf(c, b, null, ileft, iright); :}
+    |   SI:i expr:c bloque:b SINO bloque:e
+        {: RESULT = new NodoIf(c, b, e, ileft, iright); :}
+    |   SI:i expr:c bloque:b SINO if_stmt:ei
+        {: RESULT = new NodoIf(c, b, ei, ileft, iright); :}
+    ;
+
+/* ── For ────────────────────────────────────────────────────────────── */
+for_stmt
+    ::= PARA:f bloque:b
+        {: RESULT = new Nodofor(null, null, null, b, fleft, fright); :}
+    |   PARA:f expr:c bloque:b
+        {: RESULT = new Nodofor(null, c, null, b, fleft, fright); :}
+    |   PARA:f for_init:i PUNTO_COMA expr:c PUNTO_COMA for_post:p bloque:b
+        {: RESULT = new Nodofor(i, c, p, b, fleft, fright); :}
+    ;
+
+for_init
+    ::= var_decl:v   {: RESULT = v; :}
+    |   asignacion:a {: RESULT = a; :}
+    |   /* vacío */  {: RESULT = null; :}
+    ;
+
+for_post
+    ::= IDENTIFICADOR:id INCREMENTO
+        {: RESULT = new NodoIncDec(id, "++", idleft, idright); :}
+    |   IDENTIFICADOR:id DECREMENTO
+        {: RESULT = new NodoIncDec(id, "--", idleft, idright); :}
+    |   asignacion:a
+        {: RESULT = a; :}
+    |   /* vacío */
+        {: RESULT = null; :}
+    ;
+
+/* ── Llamada a función ──────────────────────────────────────────────── */
+llamada_funcion
+    ::= IDENTIFICADOR:id PAR_IZQ arg_list:al PAR_DER
+        {: RESULT = new NodoBloque(new ArrayList(), idleft, idright); :}
+    ;
+
+arg_list
+    ::= arg_list_ne:al  {: RESULT = al; :}
+    |   /* vacío */     {: RESULT = new ArrayList(); :}
+    ;
+
+arg_list_ne
+    ::= arg_list_ne:al COMA expr:e
+        {: al.add(e); RESULT = al; :}
+    |   expr:e
+        {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
+    ;
+
+/* ── Funciones embebidas ────────────────────────────────────────────── */
+llamada_embebida
+    ::= IMPRIMIR:p PAR_IZQ expr_list:el PAR_DER
+        {: RESULT = new NodoPrintln(el, pleft, pright); :}
+    |   A_ENTERO:a PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoAtoi(e, aleft, aright); :}
+    |   A_FLOTANTE:p PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoParseFloat(e, pleft, pright); :}
+    |   TIPO_DE:t PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoTypeOf(e, tleft, tright); :}
+    ;
+
+expr_list
+    ::= expr_list_ne:el  {: RESULT = el; :}
+    |   /* vacío */      {: RESULT = new ArrayList(); :}
+    ;
+
+expr_list_ne
+    ::= expr_list_ne:el COMA expr:e
+        {: el.add(e); RESULT = el; :}
+    |   expr:e
+        {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
+    ;
+
+/* ── Expresiones ────────────────────────────────────────────────────── */
+expr
+    ::= expr:i MAS   expr:d  {: RESULT = new NodoBinario(i, "+",  d, ileft, iright); :}
+    |   expr:i MENOS  expr:d  {: RESULT = new NodoBinario(i, "-",  d, ileft, iright); :}
+    |   expr:i POR  expr:d  {: RESULT = new NodoBinario(i, "*",  d, ileft, iright); :}
+    |   expr:i ENTRE expr:d  {: RESULT = new NodoBinario(i, "/",  d, ileft, iright); :}
+    |   expr:i MODULO    expr:d  {: RESULT = new NodoBinario(i, "%",  d, ileft, iright); :}
+    |   expr:i IGUAL     expr:d  {: RESULT = new NodoBinario(i, "==", d, ileft, iright); :}
+    |   expr:i DIFERENTE     expr:d  {: RESULT = new NodoBinario(i, "!=", d, ileft, iright); :}
+    |   expr:i MENOR     expr:d  {: RESULT = new NodoBinario(i, "<",  d, ileft, iright); :}
+    |   expr:i MENOR_IGUAL     expr:d  {: RESULT = new NodoBinario(i, "<=", d, ileft, iright); :}
+    |   expr:i MAYOR     expr:d  {: RESULT = new NodoBinario(i, ">",  d, ileft, iright); :}
+    |   expr:i MAYOR_IGUAL     expr:d  {: RESULT = new NodoBinario(i, ">=", d, ileft, iright); :}
+    |   expr:i Y    expr:d  {: RESULT = new NodoBinario(i, "&&", d, ileft, iright); :}
+    |   expr:i O     expr:d  {: RESULT = new NodoBinario(i, "||", d, ileft, iright); :}
+    |   NO:notk expr:e        {: RESULT = new NodoUnario("!", e, 0, 0); :}
+    |   MENOS:mk expr:e {: RESULT = new NodoUnario("-", e, 0, 0); :} %prec MENOS_UNARIO
+    |   PAR_IZQ expr:e PAR_DER  {: RESULT = e; :}
+    |   llamada_funcion:lf    {: RESULT = lf; :}
+    |   llamada_embebida:le   {: RESULT = le; :}
+    |   expr:e PUNTO IDENTIFICADOR:id
+                              {: RESULT = e; :}
+    |   LITERAL_ENTERO:v         {: RESULT = new NodoLiteral(v, "int",     vleft, vright); :}
+    |   LITERAL_FLOTANTE:v       {: RESULT = new NodoLiteral(v, "float64", vleft, vright); :}
+    |   LITERAL_CADENA:v      {: RESULT = new NodoLiteral(v, "string",  vleft, vright); :}
+    |   LITERAL_RUNA:v        {: RESULT = new NodoLiteral(v, "rune",    vleft, vright); :}
+    |   LITERAL_BOOLEANO:v        {: RESULT = new NodoLiteral(v, "bool",    vleft, vright); :}
+    |   NULO                   {: RESULT = new NodoLiteral(null, "nil",  0, 0); :}
+    |   IDENTIFICADOR:id         {: RESULT = new NodoIdentificador(id, idleft, idright); :}
+    ;

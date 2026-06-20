@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+ 
+    <groupId>com.mycompany</groupId>
+    <artifactId>golite</artifactId>
+    <version>1.0-SNAPSHOT</version>
+ 
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <exec.mainClass>com.mycompany.golite.Golite</exec.mainClass>
+ 
+        <!-- Rutas reutilizables -->
+        <cup.jar>${settings.localRepository}/com/github/vbmacher/java-cup/11b-20160615/java-cup-11b-20160615.jar</cup.jar>
+        <cup.runtime.jar>${settings.localRepository}/com/github/vbmacher/java-cup-runtime/11b-20160615/java-cup-runtime-11b-20160615.jar</cup.runtime.jar>
+        <jflex.jar>${settings.localRepository}/de/jflex/jflex/1.9.1/jflex-1.9.1.jar</jflex.jar>
+ 
+        <!-- Carpeta donde CUP y JFlex depositan el código generado -->
+        <generated.dir>${project.basedir}/src/main/java</generated.dir>
+    </properties>
+ 
+    <!-- ═══════════════════════════════════════════════════════════════
+         DEPENDENCIAS
+         ═══════════════════════════════════════════════════════════════ -->
+    <dependencies>
+ 
+        <!-- JFlex (solo para la fase de generación, no va al JAR final) -->
+        <dependency>
+            <groupId>de.jflex</groupId>
+            <artifactId>jflex</artifactId>
+            <version>1.9.1</version>
+            <scope>provided</scope>
+        </dependency>
+ 
+        <!-- CUP: herramienta generadora (java-cup) -->
+        <dependency>
+            <groupId>com.github.vbmacher</groupId>
+            <artifactId>java-cup</artifactId>
+            <version>11b-20160615</version>
+            <scope>provided</scope>
+        </dependency>
+ 
+        <!-- CUP Runtime: clases Symbol, Scanner, etc. que usa el código generado -->
+        <dependency>
+            <groupId>com.github.vbmacher</groupId>
+            <artifactId>java-cup-runtime</artifactId>
+            <version>11b-20160615</version>
+        </dependency>
+ 
+    </dependencies>
+ 
+    <!-- ═══════════════════════════════════════════════════════════════
+         BUILD
+         ═══════════════════════════════════════════════════════════════ -->
+    <build>
+ 
+        <plugins>
+ 
+         
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+ 
+                    <execution>
+                        <id>1-generar-parser-cup</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>exec</goal></goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <!-- Ejecuta la herramienta CUP -->
+                                <argument>-cp</argument>
+                                <argument>${cup.jar}</argument>
+                                <argument>java_cup.Main</argument>
+ 
+                                <!-- Paquete donde quedarán parser.java y sym.java -->
+                                <argument>-package</argument>
+                                <argument>com.mycompany.golite.parser</argument>
+ 
+                                <!-- Nombres de los archivos de salida -->
+                                <argument>-parser</argument>
+                                <argument>parser</argument>
+                                <argument>-symbols</argument>
+                                <argument>sym</argument>
+                                <argument>-expect</argument>
+                                <argument>6</argument>
+ 
+                                <!-- Carpeta de destino -->
+                                <argument>-destdir</argument>
+                                <argument>${generated.dir}/com/mycompany/golite/parser</argument>
+ 
+                                <!-- Archivo fuente .cup -->
+                                <argument>${project.basedir}/src/main/cup/golite.cup</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+ 
+                   
+                    <execution>
+                        <id>2-generar-lexer-jflex</id>
+                        <phase>process-sources</phase>
+                        <goals><goal>exec</goal></goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <!-- Ejecuta JFlex -->
+                                <argument>-cp</argument>
+                                <argument>${jflex.jar}${path.separator}${cup.runtime.jar}</argument>
+                                <argument>jflex.Main</argument>
+ 
+                                <!-- Carpeta donde deposita GoliteLexer.java -->
+                                <argument>-d</argument>
+                                <argument>${generated.dir}/com/mycompany/golite</argument>
+ 
+                                <!-- Archivo fuente .flex -->
+                                <argument>${project.basedir}/src/main/jflex/golite.flex</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+ 
+                </executions>
+            </plugin>
+ 
+         
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>21</release>
+                    <!-- Incluye explícitamente los archivos generados -->
+                    <compileSourceRoots>
+                        <compileSourceRoot>${generated.dir}</compileSourceRoot>
+                    </compileSourceRoots>
+                </configuration>
+            </plugin>
+ 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.mycompany.golite.Golite</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals><goal>single</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
+ 
+        </plugins>
+    </build>
+ 
+</project>
