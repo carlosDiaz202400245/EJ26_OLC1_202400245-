@@ -42,7 +42,9 @@ terminal            MAS, MENOS, POR, ENTRE, MODULO, MENOS_UNARIO;
 terminal            IGUAL, DIFERENTE, MENOR, MENOR_IGUAL, MAYOR, MAYOR_IGUAL;
 terminal            Y, O, NO;
 terminal            PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER;
-terminal            COMA, PUNTO_COMA, PUNTO;
+terminal            COMA, PUNTO_COMA, PUNTO, DOS_PUNTOS;
+terminal            SWITCH, CASO, DEFECTO;
+terminal            CORCHETE_IZQ, CORCHETE_DER, MAKE, LEN, APPEND;
 
 /* ── NO TERMINALES (sin genéricos) ──────────────────────────────────── */
 non terminal ArrayList   program;
@@ -59,6 +61,9 @@ non terminal Nodo        stmt;
 non terminal Nodo        var_decl;
 non terminal Nodo        asignacion;
 non terminal Nodo        if_stmt;
+non terminal Nodo        switch_stmt;
+non terminal ArrayList   case_list;
+non terminal NodoCaso    case_item;
 non terminal Nodo        for_stmt;
 non terminal Nodo        for_init;
 non terminal Nodo        for_post;
@@ -82,6 +87,7 @@ precedence left     POR, ENTRE, MODULO;
 precedence right    MENOS_UNARIO;
 precedence right    NO;
 precedence left     PAR_IZQ;
+precedence left     CORCHETE_IZQ;
 
 start with program;
 
@@ -112,14 +118,15 @@ tipo
     |   TIPO_BOOLEANO       {: RESULT = "bool";    :}
     |   TIPO_RUNA       {: RESULT = "rune";    :}
     |   IDENTIFICADOR:id   {: RESULT = id;        :}
+    |   CORCHETE_IZQ CORCHETE_DER tipo:t   {: RESULT = "[]" + t; :}
     ;
 
 /* ── Funciones ──────────────────────────────────────────────────────── */
 func_decl
     ::= FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER bloque:b
-        {: RESULT = null; :}   // Fase 1: se reconoce la sintaxis pero NO se interpreta (las funciones son fase 2)
+        {: RESULT = new NodoFuncion(id, pl, null, b, idleft, idright); :}
     |   FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER tipo:t bloque:b
-        {: RESULT = null; :}   // Fase 1: idem, función con tipo de retorno
+        {: RESULT = new NodoFuncion(id, pl, t, b, idleft, idright); :}
     ;
 
 param_list
@@ -171,6 +178,8 @@ stmt
         {: RESULT = le; :}
     |   if_stmt:i
         {: RESULT = i; :}
+    |   switch_stmt:sw
+        {: RESULT = sw; :}
     |   for_stmt:f
         {: RESULT = f; :}
     |   ROMPER:b
@@ -178,7 +187,7 @@ stmt
     |   CONTINUAR:c
         {: RESULT = new NodoContinue(cleft, cright); :}
     |   RETORNAR:r expr:e
-        {: RESULT = null; :}
+        {: RESULT = new NodoReturn(e, rleft, rright); :}
     |   PUNTO_COMA
         {: RESULT = null; :}
     ;
@@ -203,6 +212,8 @@ asignacion
         {: RESULT = new NodoAsignacion(id, "+=", e, idleft, idright); :}
     |   IDENTIFICADOR:id MENOS_ASIGNAR expr:e
         {: RESULT = new NodoAsignacion(id, "-=", e, idleft, idright); :}
+    |   IDENTIFICADOR:id CORCHETE_IZQ expr:idx CORCHETE_DER ASIGNAR expr:e
+        {: RESULT = new NodoAsignacionIndice(new NodoIdentificador(id, idleft, idright), idx, e, idleft, idright); :}
     ;
 
 /* ── If ─────────────────────────────────────────────────────────────── */
@@ -213,6 +224,28 @@ if_stmt
         {: RESULT = new NodoIf(c, b, e, ileft, iright); :}
     |   SI:i expr:c bloque:b SINO if_stmt:ei
         {: RESULT = new NodoIf(c, b, ei, ileft, iright); :}
+    ;
+
+/* ── Switch ─────────────────────────────────────────────────────────── */
+switch_stmt
+    ::= SWITCH:s expr:e LLAVE_IZQ case_list:cl LLAVE_DER
+        {: RESULT = new NodoSwitch(e, cl, sleft, sright); :}
+    |   SWITCH:s LLAVE_IZQ case_list:cl LLAVE_DER
+        {: RESULT = new NodoSwitch(null, cl, sleft, sright); :}
+    ;
+
+case_list
+    ::= case_list:cl case_item:ci
+        {: cl.add(ci); RESULT = cl; :}
+    |   /* vacío */
+        {: RESULT = new ArrayList(); :}
+    ;
+
+case_item
+    ::= CASO expr_list:el DOS_PUNTOS stmt_list:sl
+        {: RESULT = new NodoCaso(el, sl, false); :}
+    |   DEFECTO DOS_PUNTOS stmt_list:sl
+        {: RESULT = new NodoCaso(new ArrayList(), sl, true); :}
     ;
 
 /* ── For ────────────────────────────────────────────────────────────── */
@@ -245,7 +278,7 @@ for_post
 /* ── Llamada a función ──────────────────────────────────────────────── */
 llamada_funcion
     ::= IDENTIFICADOR:id PAR_IZQ arg_list:al PAR_DER
-        {: RESULT = new NodoBloque(new ArrayList(), idleft, idright); :}
+        {: RESULT = new NodoLlamada(id, al, idleft, idright); :}
     ;
 
 arg_list
@@ -270,6 +303,10 @@ llamada_embebida
         {: RESULT = new NodoParseFloat(e, pleft, pright); :}
     |   TIPO_DE:t PAR_IZQ expr:e PAR_DER
         {: RESULT = new NodoTypeOf(e, tleft, tright); :}
+    |   LEN:l PAR_IZQ expr:e PAR_DER
+        {: RESULT = new NodoLen(e, lleft, lright); :}
+    |   APPEND:a PAR_IZQ arg_list:al PAR_DER
+        {: RESULT = new NodoAppend(al, aleft, aright); :}
     ;
 
 expr_list
@@ -304,6 +341,12 @@ expr
     |   PAR_IZQ expr:e PAR_DER  {: RESULT = e; :}
     |   llamada_funcion:lf    {: RESULT = lf; :}
     |   llamada_embebida:le   {: RESULT = le; :}
+    |   expr:a CORCHETE_IZQ expr:idx CORCHETE_DER
+                              {: RESULT = new NodoAccesoIndice(a, idx, aleft, aright); :}
+    |   CORCHETE_IZQ CORCHETE_DER tipo:t LLAVE_IZQ expr_list:el LLAVE_DER
+                              {: RESULT = new NodoSliceLiteral(t, el, tleft, tright); :}
+    |   MAKE:m PAR_IZQ CORCHETE_IZQ CORCHETE_DER tipo:t COMA expr:n PAR_DER
+                              {: RESULT = new NodoMake(t, n, mleft, mright); :}
     |   expr:e PUNTO IDENTIFICADOR:id
                               {: RESULT = e; :}
     |   LITERAL_ENTERO:v         {: RESULT = new NodoLiteral(v, "int",     vleft, vright); :}

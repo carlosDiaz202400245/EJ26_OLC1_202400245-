@@ -47,6 +47,7 @@ java -cp "%CUP_JAR%" java_cup.Main ^
     -package com.mycompany.golite.parser ^
     -parser parser ^
     -symbols sym ^
+    -expect 50 ^
     -destdir %PARSER_DIR% ^
     %CUP_SRC%
 

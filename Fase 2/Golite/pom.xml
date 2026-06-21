@@ -91,7 +91,7 @@
                                 <argument>-symbols</argument>
                                 <argument>sym</argument>
                                 <argument>-expect</argument>
-                                <argument>6</argument>
+                                <argument>50</argument>
  
                                 <!-- Carpeta de destino -->
                                 <argument>-destdir</argument>

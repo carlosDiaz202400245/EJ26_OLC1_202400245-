@@ -120,6 +120,10 @@ public class NodoDeclVar extends Nodo {
                 + nombre + "'."
             );
         }
+        // Un slice ([]T) arranca como un slice vacío para que len/append funcionen
+        if (tipo.startsWith("[")) {
+            return new java.util.ArrayList<>();
+        }
         switch (tipo) {
             case "int":     return 0;
             case "float64": return 0.0;

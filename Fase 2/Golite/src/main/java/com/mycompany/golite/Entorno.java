@@ -40,6 +40,9 @@ public class Entorno {
     /** Tabla de variables de este scope */
     private final Map<String, Variable> tabla = new HashMap<>();
 
+    /** Tabla de funciones declaradas (se registran en el scope global) */
+    private final Map<String, Object> funciones = new HashMap<>();
+
     /** Entorno padre (null si es el global) */
     private final Entorno padre;
 
@@ -60,6 +63,27 @@ public class Entorno {
     /** Declara una variable nueva en el scope actual. */
     public void declarar(String nombre, String tipo, Object valor) {
         tabla.put(nombre, new Variable(tipo, valor));
+    }
+
+    // ─── FUNCIONES ─────────────────────────────────────────────────────
+
+    /** Registra una función (objeto NodoFuncion) en este entorno. */
+    public void declararFuncion(String nombre, Object funcion) {
+        funciones.put(nombre, funcion);
+    }
+
+    /** Busca una función en este scope y sube hasta el global; null si no existe. */
+    public Object obtenerFuncion(String nombre) {
+        if (funciones.containsKey(nombre)) return funciones.get(nombre);
+        if (padre != null) return padre.obtenerFuncion(nombre);
+        return null;
+    }
+
+    /** Devuelve el entorno global (la raíz de la cadena de scopes). */
+    public Entorno raiz() {
+        Entorno e = this;
+        while (e.padre != null) e = e.padre;
+        return e;
     }
 
     // ─── ASIGNAR VARIABLE ──────────────────────────────────────────────

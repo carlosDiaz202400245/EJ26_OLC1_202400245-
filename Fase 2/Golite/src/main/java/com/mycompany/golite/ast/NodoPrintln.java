@@ -43,20 +43,32 @@ public class NodoPrintln extends Nodo {
         return null;
     }
 
-    // ─── FORMATEAR VALOR PARA IMPRIMIR ─────────────────────────────────
+    // ─── FORMATEAR VALOR PARA IMPRIMIR (estilo Go) ─────────────────────
     private String formatear(Object valor) {
         if (valor == null)            return "nil";
         if (valor instanceof Boolean) return valor.toString();
         if (valor instanceof Integer) return valor.toString();
         if (valor instanceof Double)  return formatearDouble((Double) valor);
         if (valor instanceof String)  return (String) valor;
+        if (valor instanceof List)    return formatearSlice((List<?>) valor);
         return valor.toString();
     }
 
-    /** Formatea un Double igual que Go. */
+    /** Formatea un slice estilo Go: [a b c], con espacios y recursivo para matrices. */
+    private String formatearSlice(List<?> lista) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < lista.size(); i++) {
+            if (i > 0) sb.append(" ");
+            sb.append(formatear(lista.get(i)));
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    /** Formatea un Double estilo Go: 1.0 -> "1", 1.5 -> "1.5". */
     private String formatearDouble(Double d) {
         if (d == Math.floor(d) && !Double.isInfinite(d)) {
-            return String.valueOf(d);
+            return String.valueOf((long) d.doubleValue());
         }
         return String.valueOf(d);
     }

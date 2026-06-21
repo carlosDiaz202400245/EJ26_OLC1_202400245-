@@ -100,6 +100,12 @@ whitespace   = [ \r\t\f\n]+
 "continue"                   { return token(sym.CONTINUAR);      }
 "return"                     { return token(sym.RETORNAR);        }
 "nil"                        { return token(sym.NULO);           }
+"switch"                     { return token(sym.SWITCH);         }
+"case"                       { return token(sym.CASO);           }
+"default"                    { return token(sym.DEFECTO);        }
+"make"                       { return token(sym.MAKE);           }
+"len"                        { return token(sym.LEN);            }
+"append"                     { return token(sym.APPEND);         }
 
 // Tipos de datos
 "int"                        { return token(sym.TIPO_ENTERO);      }
@@ -183,8 +189,11 @@ whitespace   = [ \r\t\f\n]+
 ")"                          { return token(sym.PAR_DER);        }
 "{"                          { return token(sym.LLAVE_IZQ);        }
 "}"                          { return token(sym.LLAVE_DER);        }
+"["                          { return token(sym.CORCHETE_IZQ);     }
+"]"                          { return token(sym.CORCHETE_DER);     }
 ","                          { return token(sym.COMA);         }
 ";"                          { return token(sym.PUNTO_COMA);     }
+":"                          { return token(sym.DOS_PUNTOS);     }
 "."                          { return token(sym.PUNTO);           }
 
 // ─────────────────────────────────────────────────────────────────────
