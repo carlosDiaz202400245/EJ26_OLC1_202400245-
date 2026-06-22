@@ -1,0 +1,24 @@
+// Prueba de slices multidimensionales y matrices (Fase 2, paso 3b)
+
+func main() {
+    // Matriz literal con tipo elidido en los elementos internos
+    var m [][]int = [][]int{{1, 2, 3}, {4, 5, 6}}
+    fmt.Println("m =", m)
+    fmt.Println("m[0] =", m[0])
+    fmt.Println("m[1][2] =", m[1][2])
+
+    // Asignacion multidimensional
+    m[0][0] = 99
+    fmt.Println("despues de m[0][0]=99 ->", m)
+
+    // Construir una matriz con make + dos for anidados
+    var g [][]int = make([][]int, 2)
+    for i := 0; i < 2; i++ {
+        g[i] = make([]int, 3)
+        for j := 0; j < 3; j++ {
+            g[i][j] = i * 3 + j
+        }
+    }
+    fmt.Println("g =", g)
+    fmt.Println("len(g) =", len(g), "len(g[0]) =", len(g[0]))
+}

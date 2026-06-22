@@ -1,0 +1,11 @@
+// Prueba de slices.Index y strings.Join (Fase 2, paso 3c)
+
+func main() {
+    var nums []int = []int{10, 20, 30, 40}
+    fmt.Println("indice de 30 =", slices.Index(nums, 30))
+    fmt.Println("indice de 99 =", slices.Index(nums, 99))
+
+    var palabras []string = []string{"hola", "mundo", "go"}
+    fmt.Println(strings.Join(palabras, "-"))
+    fmt.Println(strings.Join(palabras, ", "))
+}

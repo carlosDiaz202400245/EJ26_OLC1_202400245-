@@ -86,6 +86,8 @@ whitespace   = [ \r\t\f\n]+
 "strconv.Atoi"               { return token(sym.A_ENTERO);          }
 "strconv.ParseFloat"         { return token(sym.A_FLOTANTE);    }
 "reflect.TypeOf"             { return token(sym.TIPO_DE);        }
+"slices.Index"               { return token(sym.SLICES_INDEX);   }
+"strings.Join"               { return token(sym.STRINGS_JOIN);   }
 
 // ─────────────────────────────────────────────────────────────────────
 // PALABRAS RESERVADAS

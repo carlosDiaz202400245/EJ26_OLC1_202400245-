@@ -36,6 +36,7 @@ terminal String     LITERAL_CADENA;
 terminal            LITERAL_RUNA;
 terminal String     IDENTIFICADOR;
 terminal            IMPRIMIR, A_ENTERO, A_FLOTANTE, TIPO_DE;
+terminal            SLICES_INDEX, STRINGS_JOIN;
 terminal            ASIGNAR, DEFINIR, MAS_ASIGNAR, MENOS_ASIGNAR;
 terminal            INCREMENTO, DECREMENTO;
 terminal            MAS, MENOS, POR, ENTRE, MODULO, MENOS_UNARIO;
@@ -74,6 +75,9 @@ non terminal Nodo        llamada_embebida;
 non terminal Nodo        expr;
 non terminal ArrayList   expr_list;
 non terminal ArrayList   expr_list_ne;
+non terminal ArrayList   elem_list;
+non terminal ArrayList   elem_list_ne;
+non terminal Nodo        elem;
 
 /* ── PRECEDENCIA ────────────────────────────────────────────────────── */
 
@@ -212,8 +216,8 @@ asignacion
         {: RESULT = new NodoAsignacion(id, "+=", e, idleft, idright); :}
     |   IDENTIFICADOR:id MENOS_ASIGNAR expr:e
         {: RESULT = new NodoAsignacion(id, "-=", e, idleft, idright); :}
-    |   IDENTIFICADOR:id CORCHETE_IZQ expr:idx CORCHETE_DER ASIGNAR expr:e
-        {: RESULT = new NodoAsignacionIndice(new NodoIdentificador(id, idleft, idright), idx, e, idleft, idright); :}
+    |   expr:a CORCHETE_IZQ expr:idx CORCHETE_DER ASIGNAR expr:e
+        {: RESULT = new NodoAsignacionIndice(a, idx, e, aleft, aright); :}
     ;
 
 /* ── If ─────────────────────────────────────────────────────────────── */
@@ -307,6 +311,10 @@ llamada_embebida
         {: RESULT = new NodoLen(e, lleft, lright); :}
     |   APPEND:a PAR_IZQ arg_list:al PAR_DER
         {: RESULT = new NodoAppend(al, aleft, aright); :}
+    |   SLICES_INDEX:s PAR_IZQ expr:sl COMA expr:x PAR_DER
+        {: RESULT = new NodoSlicesIndex(sl, x, sleft, sright); :}
+    |   STRINGS_JOIN:j PAR_IZQ expr:sl COMA expr:sep PAR_DER
+        {: RESULT = new NodoStringsJoin(sl, sep, jleft, jright); :}
     ;
 
 expr_list
@@ -319,6 +327,26 @@ expr_list_ne
         {: el.add(e); RESULT = el; :}
     |   expr:e
         {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
+    ;
+
+/* ── Elementos de un slice literal (permiten {..} anidados para matrices) ── */
+elem_list
+    ::= elem_list_ne:el  {: RESULT = el; :}
+    |   /* vacío */      {: RESULT = new ArrayList(); :}
+    ;
+
+elem_list_ne
+    ::= elem_list_ne:el COMA elem:e
+        {: el.add(e); RESULT = el; :}
+    |   elem:e
+        {: ArrayList l = new ArrayList(); l.add(e); RESULT = l; :}
+    ;
+
+elem
+    ::= expr:e
+        {: RESULT = e; :}
+    |   LLAVE_IZQ:lb elem_list:el LLAVE_DER
+        {: RESULT = new NodoSliceLiteral(null, el, lbleft, lbright); :}
     ;
 
 /* ── Expresiones ────────────────────────────────────────────────────── */
@@ -343,7 +371,7 @@ expr
     |   llamada_embebida:le   {: RESULT = le; :}
     |   expr:a CORCHETE_IZQ expr:idx CORCHETE_DER
                               {: RESULT = new NodoAccesoIndice(a, idx, aleft, aright); :}
-    |   CORCHETE_IZQ CORCHETE_DER tipo:t LLAVE_IZQ expr_list:el LLAVE_DER
+    |   CORCHETE_IZQ CORCHETE_DER tipo:t LLAVE_IZQ elem_list:el LLAVE_DER
                               {: RESULT = new NodoSliceLiteral(t, el, tleft, tright); :}
     |   MAKE:m PAR_IZQ CORCHETE_IZQ CORCHETE_DER tipo:t COMA expr:n PAR_DER
                               {: RESULT = new NodoMake(t, n, mleft, mright); :}
