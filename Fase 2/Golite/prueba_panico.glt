@@ -1,0 +1,16 @@
+// Prueba de modo panico: varios errores sintacticos en un mismo archivo.
+// Con recuperacion, el parser debe reportar VARIOS y seguir, en vez de
+// detenerse en el primero.
+
+func main() {
+    var a int = 10
+
+    b :=            // error 1: falta la expresion despues de :=
+
+    var c int = 20
+
+    fmt.Println a, c)   // error 2: falta el parentesis de apertura
+
+    var d int = 30
+    fmt.Println(d)      // esta linea valida deberia seguir analizandose
+}

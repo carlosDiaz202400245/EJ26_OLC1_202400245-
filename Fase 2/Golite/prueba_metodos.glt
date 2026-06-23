@@ -1,0 +1,25 @@
+// Prueba de metodos de struct (Fase 2, paso 4b)
+
+struct Rectangulo {
+    int ancho;
+    int alto;
+}
+
+// Metodo con valor de retorno
+func (r Rectangulo) Area() int {
+    return r.ancho * r.alto
+}
+
+// Metodo sin retorno que ademas llama a otro metodo del mismo receptor
+func (r Rectangulo) Describir() {
+    fmt.Println("Rectangulo", r.ancho, "x", r.alto, "area =", r.Area())
+}
+
+func main() {
+    var r Rectangulo
+    r.ancho = 4
+    r.alto = 3
+
+    fmt.Println("Area =", r.Area())
+    r.Describir()
+}

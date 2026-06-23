@@ -51,7 +51,21 @@ public class NodoPrintln extends Nodo {
         if (valor instanceof Double)  return formatearDouble((Double) valor);
         if (valor instanceof String)  return (String) valor;
         if (valor instanceof List)    return formatearSlice((List<?>) valor);
+        if (valor instanceof InstanciaStruct) return formatearStruct((InstanciaStruct) valor);
         return valor.toString();
+    }
+
+    /** Formatea un struct estilo Go: {v1 v2 v3}, recursivo para campos struct/slice. */
+    private String formatearStruct(InstanciaStruct inst) {
+        StringBuilder sb = new StringBuilder("{");
+        boolean primero = true;
+        for (Object v : inst.campos.values()) {
+            if (!primero) sb.append(" ");
+            sb.append(formatear(v));
+            primero = false;
+        }
+        sb.append("}");
+        return sb.toString();
     }
 
     /** Formatea un slice estilo Go: [a b c], con espacios y recursivo para matrices. */

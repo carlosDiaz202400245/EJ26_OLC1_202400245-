@@ -13,19 +13,37 @@ public class NodoFuncion extends Nodo {
     public String tipoRetorno;        // null si la función no retorna valor
     public NodoBloque cuerpo;
 
+    // Receptor (solo para métodos de struct): func (e Estudiante) Metodo() {...}
+    public String receptorNombre;     // null si es función normal
+    public String receptorTipo;       // null si es función normal
+
+    /** Constructor para funciones normales (sin receptor). */
     public NodoFuncion(String nombre, List parametros, String tipoRetorno,
                        NodoBloque cuerpo, int linea, int columna) {
-        super(linea, columna);
-        this.nombre      = nombre;
-        this.parametros  = parametros;
-        this.tipoRetorno = tipoRetorno;
-        this.cuerpo      = cuerpo;
+        this(null, null, nombre, parametros, tipoRetorno, cuerpo, linea, columna);
     }
 
-    /** Registra la función en el entorno; no ejecuta su cuerpo. */
+    /** Constructor general; con receptor != null es un método de struct. */
+    public NodoFuncion(String receptorNombre, String receptorTipo, String nombre,
+                       List parametros, String tipoRetorno, NodoBloque cuerpo,
+                       int linea, int columna) {
+        super(linea, columna);
+        this.receptorNombre = receptorNombre;
+        this.receptorTipo   = receptorTipo;
+        this.nombre         = nombre;
+        this.parametros     = parametros;
+        this.tipoRetorno    = tipoRetorno;
+        this.cuerpo         = cuerpo;
+    }
+
+    /** Se registra como método (si tiene receptor) o como función normal. */
     @Override
     public Object ejecutar(com.mycompany.golite.Entorno entorno) {
-        entorno.declararFuncion(nombre, this);
+        if (receptorTipo != null) {
+            entorno.declararMetodo(receptorTipo, nombre, this);
+        } else {
+            entorno.declararFuncion(nombre, this);
+        }
         return null;
     }
 

@@ -108,6 +108,7 @@ whitespace   = [ \r\t\f\n]+
 "make"                       { return token(sym.MAKE);           }
 "len"                        { return token(sym.LEN);            }
 "append"                     { return token(sym.APPEND);         }
+"struct"                     { return token(sym.STRUCT);         }
 
 // Tipos de datos
 "int"                        { return token(sym.TIPO_ENTERO);      }

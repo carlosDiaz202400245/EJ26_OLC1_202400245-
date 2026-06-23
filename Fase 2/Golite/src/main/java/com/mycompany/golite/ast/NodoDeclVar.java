@@ -42,7 +42,13 @@ public class NodoDeclVar extends Nodo {
                 tipo = inferirTipo(valor);
             }
         } else {
-            valor = valorPorDefecto();   // sin expresión → valor por defecto
+            // Si el tipo es un struct, crear una instancia con campos en valor cero
+            Object def = (tipo != null) ? entorno.obtenerStruct(tipo) : null;
+            if (def instanceof NodoStruct) {
+                valor = ((NodoStruct) def).nuevaInstanciaCero(entorno, new java.util.HashSet<>());
+            } else {
+                valor = valorPorDefecto();   // sin expresión → valor por defecto
+            }
         }
 
         entorno.declarar(nombre, tipo, valor);

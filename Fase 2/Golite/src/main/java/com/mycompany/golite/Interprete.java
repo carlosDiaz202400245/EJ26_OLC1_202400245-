@@ -5,6 +5,7 @@ import com.mycompany.golite.gui.ConsolePanel;
 import com.mycompany.golite.ast.NodoPrintln;
 import com.mycompany.golite.ast.NodoFuncion;
 import com.mycompany.golite.ast.NodoLlamada;
+import com.mycompany.golite.ast.NodoStruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,15 @@ public class Interprete {
     public void ejecutar(List<Nodo> nodos) {
         Entorno entornoGlobal = new Entorno();
 
-        // 1) Pre-pass: registrar todas las funciones (permite llamarlas
+        // 1) Pre-pass A: registrar los structs (los tipos deben existir antes
+        //    de declarar variables o funciones que los usen).
+        for (Nodo nodo : nodos) {
+            if (nodo instanceof NodoStruct) {
+                nodo.ejecutar(entornoGlobal);
+            }
+        }
+
+        // 2) Pre-pass B: registrar todas las funciones (permite llamarlas
         //    aunque se declaren después, y soporta recursión).
         for (Nodo nodo : nodos) {
             if (nodo instanceof NodoFuncion) {
@@ -36,9 +45,9 @@ public class Interprete {
             }
         }
 
-        // 2) Ejecutar las sentencias de nivel superior (todo lo que no es función).
+        // 3) Ejecutar las sentencias de nivel superior (ni structs ni funciones).
         for (Nodo nodo : nodos) {
-            if (nodo == null || nodo instanceof NodoFuncion) continue;
+            if (nodo == null || nodo instanceof NodoFuncion || nodo instanceof NodoStruct) continue;
             ejecutarNodo(nodo, entornoGlobal);
         }
 

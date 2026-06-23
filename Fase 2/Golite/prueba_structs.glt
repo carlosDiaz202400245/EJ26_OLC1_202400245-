@@ -1,0 +1,35 @@
+// Prueba de structs (Fase 2, paso 4a): definicion, valor cero, acceso y asignacion
+
+struct Materia {
+    string Nombre;
+    int Nota;
+}
+
+struct Estudiante {
+    string Nombre;
+    int Edad;
+    bool Asig;
+    Materia Notas;
+}
+
+func main() {
+    // Instanciacion con valor cero
+    var e Estudiante
+
+    // Asignacion de atributos
+    e.Nombre = "Ana"
+    e.Edad = 20
+    e.Asig = true
+
+    // Atributos anidados (e.Notas ya es una Materia en valor cero)
+    e.Notas.Nombre = "Compiladores"
+    e.Notas.Nota = 90
+
+    // Acceso
+    fmt.Println("Nombre:", e.Nombre)
+    fmt.Println("Edad:", e.Edad)
+    fmt.Println("Materia:", e.Notas.Nombre, "Nota:", e.Notas.Nota)
+
+    // Struct completo (formato Go)
+    fmt.Println("Completo:", e)
+}

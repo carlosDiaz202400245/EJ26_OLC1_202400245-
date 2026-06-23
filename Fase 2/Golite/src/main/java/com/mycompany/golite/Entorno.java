@@ -43,6 +43,12 @@ public class Entorno {
     /** Tabla de funciones declaradas (se registran en el scope global) */
     private final Map<String, Object> funciones = new HashMap<>();
 
+    /** Tabla de definiciones de struct (se registran en el scope global) */
+    private final Map<String, Object> structs = new HashMap<>();
+
+    /** Tabla de métodos de struct, con clave "Tipo.metodo" */
+    private final Map<String, Object> metodos = new HashMap<>();
+
     /** Entorno padre (null si es el global) */
     private final Entorno padre;
 
@@ -76,6 +82,31 @@ public class Entorno {
     public Object obtenerFuncion(String nombre) {
         if (funciones.containsKey(nombre)) return funciones.get(nombre);
         if (padre != null) return padre.obtenerFuncion(nombre);
+        return null;
+    }
+
+    /** Registra la definición de un struct (objeto NodoStruct). */
+    public void declararStruct(String nombre, Object definicion) {
+        structs.put(nombre, definicion);
+    }
+
+    /** Busca la definición de un struct; sube hasta el global; null si no existe. */
+    public Object obtenerStruct(String nombre) {
+        if (structs.containsKey(nombre)) return structs.get(nombre);
+        if (padre != null) return padre.obtenerStruct(nombre);
+        return null;
+    }
+
+    /** Registra un método de struct, identificado por tipo + nombre. */
+    public void declararMetodo(String tipo, String nombre, Object funcion) {
+        metodos.put(tipo + "." + nombre, funcion);
+    }
+
+    /** Busca un método por tipo + nombre; sube hasta el global; null si no existe. */
+    public Object obtenerMetodo(String tipo, String nombre) {
+        String clave = tipo + "." + nombre;
+        if (metodos.containsKey(clave)) return metodos.get(clave);
+        if (padre != null) return padre.obtenerMetodo(tipo, nombre);
         return null;
     }
 

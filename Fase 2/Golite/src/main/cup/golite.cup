@@ -46,12 +46,16 @@ terminal            PAR_IZQ, PAR_DER, LLAVE_IZQ, LLAVE_DER;
 terminal            COMA, PUNTO_COMA, PUNTO, DOS_PUNTOS;
 terminal            SWITCH, CASO, DEFECTO;
 terminal            CORCHETE_IZQ, CORCHETE_DER, MAKE, LEN, APPEND;
+terminal            STRUCT;
 
 /* ── NO TERMINALES (sin genéricos) ──────────────────────────────────── */
 non terminal ArrayList   program;
 non terminal ArrayList   decl_list;
 non terminal Nodo        decl;
 non terminal Nodo        func_decl;
+non terminal Nodo        struct_decl;
+non terminal ArrayList   campo_list;
+non terminal NodoDeclVar campo;
 non terminal ArrayList   param_list;
 non terminal ArrayList   param_list_ne;
 non terminal Nodo        param;
@@ -69,6 +73,7 @@ non terminal Nodo        for_stmt;
 non terminal Nodo        for_init;
 non terminal Nodo        for_post;
 non terminal Nodo        llamada_funcion;
+non terminal Nodo        llamada_metodo;
 non terminal ArrayList   arg_list;
 non terminal ArrayList   arg_list_ne;
 non terminal Nodo        llamada_embebida;
@@ -110,8 +115,28 @@ decl_list
     ;
 
 decl
-    ::= func_decl:f  {: RESULT = f; :}
-    |   stmt:s       {: RESULT = s; :}
+    ::= func_decl:f    {: RESULT = f; :}
+    |   struct_decl:st {: RESULT = st; :}
+    |   stmt:s         {: RESULT = s; :}
+    |   error          {: RESULT = null; :}   // Modo pánico a nivel de declaración
+    ;
+
+/* ── Structs ────────────────────────────────────────────────────────── */
+struct_decl
+    ::= STRUCT:s IDENTIFICADOR:id LLAVE_IZQ campo_list:cl LLAVE_DER
+        {: RESULT = new NodoStruct(id, cl, sleft, sright); :}
+    ;
+
+campo_list
+    ::= campo_list:cl campo:c
+        {: cl.add(c); RESULT = cl; :}
+    |   /* vacío */
+        {: RESULT = new ArrayList(); :}
+    ;
+
+campo
+    ::= tipo:t IDENTIFICADOR:id PUNTO_COMA
+        {: RESULT = new NodoDeclVar(id, t, null, idleft, idright); :}
     ;
 
 /* ── Tipos ──────────────────────────────────────────────────────────── */
@@ -131,6 +156,10 @@ func_decl
         {: RESULT = new NodoFuncion(id, pl, null, b, idleft, idright); :}
     |   FUNCION IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER tipo:t bloque:b
         {: RESULT = new NodoFuncion(id, pl, t, b, idleft, idright); :}
+    |   FUNCION PAR_IZQ IDENTIFICADOR:rn tipo:rt PAR_DER IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER bloque:b
+        {: RESULT = new NodoFuncion(rn, rt, id, pl, null, b, rnleft, rnright); :}
+    |   FUNCION PAR_IZQ IDENTIFICADOR:rn tipo:rt PAR_DER IDENTIFICADOR:id PAR_IZQ param_list:pl PAR_DER tipo:t bloque:b
+        {: RESULT = new NodoFuncion(rn, rt, id, pl, t, b, rnleft, rnright); :}
     ;
 
 param_list
@@ -178,6 +207,8 @@ stmt
         {: RESULT = new NodoIncDec(id, "--", idleft, idright); :}
     |   llamada_funcion:lf
         {: RESULT = lf; :}
+    |   llamada_metodo:lm
+        {: RESULT = lm; :}
     |   llamada_embebida:le
         {: RESULT = le; :}
     |   if_stmt:i
@@ -194,6 +225,8 @@ stmt
         {: RESULT = new NodoReturn(e, rleft, rright); :}
     |   PUNTO_COMA
         {: RESULT = null; :}
+    |   error
+        {: RESULT = null; :}   // Modo pánico: descarta la sentencia mal formada y sigue
     ;
 
 /* ── Variables ──────────────────────────────────────────────────────── */
@@ -218,6 +251,8 @@ asignacion
         {: RESULT = new NodoAsignacion(id, "-=", e, idleft, idright); :}
     |   expr:a CORCHETE_IZQ expr:idx CORCHETE_DER ASIGNAR expr:e
         {: RESULT = new NodoAsignacionIndice(a, idx, e, aleft, aright); :}
+    |   expr:o PUNTO IDENTIFICADOR:id ASIGNAR expr:e
+        {: RESULT = new NodoAsignacionAtributo(o, id, e, oleft, oright); :}
     ;
 
 /* ── If ─────────────────────────────────────────────────────────────── */
@@ -283,6 +318,11 @@ for_post
 llamada_funcion
     ::= IDENTIFICADOR:id PAR_IZQ arg_list:al PAR_DER
         {: RESULT = new NodoLlamada(id, al, idleft, idright); :}
+    ;
+
+llamada_metodo
+    ::= expr:o PUNTO IDENTIFICADOR:id PAR_IZQ arg_list:al PAR_DER
+        {: RESULT = new NodoLlamadaMetodo(o, id, al, oleft, oright); :}
     ;
 
 arg_list
@@ -368,6 +408,7 @@ expr
     |   MENOS:mk expr:e {: RESULT = new NodoUnario("-", e, 0, 0); :} %prec MENOS_UNARIO
     |   PAR_IZQ expr:e PAR_DER  {: RESULT = e; :}
     |   llamada_funcion:lf    {: RESULT = lf; :}
+    |   llamada_metodo:lm     {: RESULT = lm; :}
     |   llamada_embebida:le   {: RESULT = le; :}
     |   expr:a CORCHETE_IZQ expr:idx CORCHETE_DER
                               {: RESULT = new NodoAccesoIndice(a, idx, aleft, aright); :}
@@ -376,7 +417,7 @@ expr
     |   MAKE:m PAR_IZQ CORCHETE_IZQ CORCHETE_DER tipo:t COMA expr:n PAR_DER
                               {: RESULT = new NodoMake(t, n, mleft, mright); :}
     |   expr:e PUNTO IDENTIFICADOR:id
-                              {: RESULT = e; :}
+                              {: RESULT = new NodoAccesoAtributo(e, id, eleft, eright); :}
     |   LITERAL_ENTERO:v         {: RESULT = new NodoLiteral(v, "int",     vleft, vright); :}
     |   LITERAL_FLOTANTE:v       {: RESULT = new NodoLiteral(v, "float64", vleft, vright); :}
     |   LITERAL_CADENA:v      {: RESULT = new NodoLiteral(v, "string",  vleft, vright); :}
