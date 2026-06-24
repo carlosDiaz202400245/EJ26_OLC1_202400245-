@@ -126,7 +126,7 @@ public class NodoDeclVar extends Nodo {
                 + nombre + "'."
             );
         }
-        // Un slice ([]T) arranca como un slice vacío para que len/append funcionen
+        // un slice arranca vacío para que len y append funcionen
         if (tipo.startsWith("[")) {
             return new java.util.ArrayList<>();
         }

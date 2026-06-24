@@ -29,23 +29,23 @@ public class Interprete {
     public void ejecutar(List<Nodo> nodos) {
         Entorno entornoGlobal = new Entorno();
 
-        // 1) Pre-pass A: registrar los structs (los tipos deben existir antes
-        //    de declarar variables o funciones que los usen).
+        // 1) Pre-pass A: registrar los structs; los tipos deben existir antes
+        //    de declarar variables o funciones que los usen.
         for (Nodo nodo : nodos) {
             if (nodo instanceof NodoStruct) {
                 nodo.ejecutar(entornoGlobal);
             }
         }
 
-        // 2) Pre-pass B: registrar todas las funciones (permite llamarlas
-        //    aunque se declaren después, y soporta recursión).
+        // 2) Pre-pass B: registrar las funciones; se pueden llamar
+        //    aunque se declaren después, y soporta recursión.
         for (Nodo nodo : nodos) {
             if (nodo instanceof NodoFuncion) {
                 nodo.ejecutar(entornoGlobal);
             }
         }
 
-        // 3) Ejecutar las sentencias de nivel superior (ni structs ni funciones).
+        // 3) Ejecutar las sentencias de nivel superior, ni structs ni funciones.
         for (Nodo nodo : nodos) {
             if (nodo == null || nodo instanceof NodoFuncion || nodo instanceof NodoStruct) continue;
             ejecutarNodo(nodo, entornoGlobal);

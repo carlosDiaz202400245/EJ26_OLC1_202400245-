@@ -2,11 +2,6 @@ package com.mycompany.golite.ast;
 
 import java.util.List;
 
-/**
- * Llamada a un método de struct: instancia.Metodo(args). Enlaza el receptor
- * (por referencia, para que el método pueda mutar la instancia) y los
- * parámetros, ejecuta el cuerpo y devuelve el valor del return.
- */
 public class NodoLlamadaMetodo extends Nodo {
 
     public Nodo base;            // expresión que da la instancia receptora

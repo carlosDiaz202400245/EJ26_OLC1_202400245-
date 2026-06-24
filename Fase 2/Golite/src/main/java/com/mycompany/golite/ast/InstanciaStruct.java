@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Instancia de un struct en tiempo de ejecución: el nombre del tipo y un mapa
- * ordenado campo -> valor (el orden de inserción respeta el orden de declaración).
+ * ordenado campo -> valor, en orden de declaración.
  */
 public class InstanciaStruct {
 

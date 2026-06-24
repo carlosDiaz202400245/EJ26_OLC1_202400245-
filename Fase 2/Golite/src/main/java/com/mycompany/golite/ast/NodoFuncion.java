@@ -3,7 +3,7 @@ package com.mycompany.golite.ast;
 import java.util.List;
 
 /**
- * Declaración de una función: nombre, parámetros, tipo de retorno (o null) y cuerpo.
+ * Declaración de una función: nombre, parámetros, tipo de retorno y cuerpo.
  * Al ejecutarse solo se registra en el entorno; su cuerpo corre cuando se la llama.
  */
 public class NodoFuncion extends Nodo {
@@ -13,7 +13,7 @@ public class NodoFuncion extends Nodo {
     public String tipoRetorno;        // null si la función no retorna valor
     public NodoBloque cuerpo;
 
-    // Receptor (solo para métodos de struct): func (e Estudiante) Metodo() {...}
+    // Receptor; solo lo usan los métodos de struct
     public String receptorNombre;     // null si es función normal
     public String receptorTipo;       // null si es función normal
 

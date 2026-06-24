@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Función append: append(slice, e1, e2, ...). Devuelve un slice NUEVO con los
- * elementos agregados al final (el original no se modifica, como en Go).
+ * elementos agregados al final; el original no se modifica, como en Go.
  */
 public class NodoAppend extends Nodo {
 
@@ -34,7 +34,7 @@ public class NodoAppend extends Nodo {
                 "[Error Semántico] Línea " + linea + ", Columna " + columna
                 + ": el primer argumento de append debe ser un slice.");
         }
-        // base == null (slice nil) se trata como slice vacío
+        // un slice nil se trata como vacío
 
         for (int i = 1; i < argumentos.size(); i++) {
             nuevo.add(argumentos.get(i).ejecutar(entorno));

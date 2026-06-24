@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Acceso por índice: s[i]. Como base es una expresión, también soporta
- * accesos encadenados tipo m[i][j] (matrices) en pasos posteriores.
+ * accesos encadenados tipo m[i][j] para matrices.
  */
 public class NodoAccesoIndice extends Nodo {
 

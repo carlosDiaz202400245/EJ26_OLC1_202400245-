@@ -3,7 +3,7 @@ package com.mycompany.golite.ast;
 import java.util.List;
 
 /**
- * Un case (o default) dentro de un switch: los valores con los que compara
+ * Un case o default dentro de un switch: los valores con los que compara
  * y el cuerpo de sentencias que ejecuta. Si esDefault es true, no usa valores.
  */
 public class NodoCaso {

@@ -43,7 +43,7 @@ public class NodoPrintln extends Nodo {
         return null;
     }
 
-    // ─── FORMATEAR VALOR PARA IMPRIMIR (estilo Go) ─────────────────────
+    // ─── FORMATEAR VALOR PARA IMPRIMIR, ESTILO GO ─────────────────────
     private String formatear(Object valor) {
         if (valor == null)            return "nil";
         if (valor instanceof Boolean) return valor.toString();

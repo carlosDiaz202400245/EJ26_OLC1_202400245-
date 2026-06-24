@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class NodoSliceLiteral extends Nodo {
 
-    public String tipoElemento;      // p.ej. "int" o "[]int" (anidado)
+    public String tipoElemento;      // p.ej. "int" o "[]int"
     public List<Nodo> elementos;
 
     public NodoSliceLiteral(String tipoElemento, List elementos, int linea, int columna) {

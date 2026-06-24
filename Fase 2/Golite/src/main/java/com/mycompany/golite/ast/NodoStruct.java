@@ -6,8 +6,8 @@ import java.util.Set;
 import com.mycompany.golite.Entorno;
 
 /**
- * Definición de un struct: nombre y lista de campos (cada campo es un
- * NodoDeclVar con su tipo y nombre). Al ejecutarse se registra en el entorno.
+ * Definición de un struct: nombre y lista de campos como NodoDeclVar.
+ * Al ejecutarse se registra en el entorno.
  */
 public class NodoStruct extends Nodo {
 
@@ -29,8 +29,8 @@ public class NodoStruct extends Nodo {
 
     /**
      * Crea una instancia con todos los campos en su valor cero. Los campos de
-     * tipo struct se instancian recursivamente; si hay un ciclo (un struct que
-     * se contiene a sí mismo) ese campo queda en nil para no recursar infinito.
+     * tipo struct se instancian recursivamente; si hay un ciclo, es decir un
+     * struct que se contiene a sí mismo, ese campo queda en nil.
      */
     public InstanciaStruct nuevaInstanciaCero(Entorno entorno, Set<String> enConstruccion) {
         InstanciaStruct inst = new InstanciaStruct(nombre);

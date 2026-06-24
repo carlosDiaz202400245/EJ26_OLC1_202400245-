@@ -4,10 +4,10 @@ import java.util.List;
 import com.mycompany.golite.Entorno;
 
 /**
- * Sentencia switch, con o sin expresión. Sin fallthrough (como en Go):
+ * Sentencia switch, con o sin expresión. Sin fallthrough, como en Go.
  * ejecuta solo el primer case que coincide y luego corta.
- *   - Con expresión: cada case compara su(s) valor(es) contra la expresión.
- *   - Sin expresión: cada case es una condición booleana (estilo if-else).
+ *   - Con expresión: cada case compara sus valores contra la expresión.
+ *   - Sin expresión: cada case es una condición booleana.
  */
 public class NodoSwitch extends Nodo {
 

@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * Llamada a una función definida por el usuario: nombre + argumentos.
- * Crea un scope nuevo (hijo del global, estilo Go), enlaza los parámetros con
+ * Crea un scope nuevo, enlaza los parámetros con
  * los argumentos evaluados y ejecuta el cuerpo, devolviendo el valor del return.
  */
 public class NodoLlamada extends Nodo {
@@ -36,11 +36,11 @@ public class NodoLlamada extends Nodo {
                 + " argumento(s), se recibieron " + argumentos.size() + ".");
         }
 
-        // Scope de la función: hijo del global (no del llamador), estilo Go
+        // Scope de la función: hijo del global, estilo Go
         com.mycompany.golite.Entorno global    = entorno.raiz();
         com.mycompany.golite.Entorno scopeFunc = new com.mycompany.golite.Entorno(global);
 
-        // Enlazar cada parámetro con su argumento (evaluado en el scope del llamador)
+        // Enlazar cada parámetro con su argumento
         for (int i = 0; i < f.parametros.size(); i++) {
             NodoDeclVar p = f.parametros.get(i);
             Object val    = argumentos.get(i).ejecutar(entorno);

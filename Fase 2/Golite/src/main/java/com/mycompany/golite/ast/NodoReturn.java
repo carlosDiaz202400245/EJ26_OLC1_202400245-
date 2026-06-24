@@ -1,12 +1,12 @@
 package com.mycompany.golite.ast;
 
 /**
- * Sentencia return. Evalúa su expresión (si la hay) y emite una ReturnSignal,
+ * Sentencia return. Evalúa su expresión y emite una ReturnSignal,
  * que el bloque y la llamada propagan hacia arriba para terminar la función.
  */
 public class NodoReturn extends Nodo {
 
-    public Nodo expresion;   // puede ser null (return sin valor)
+    public Nodo expresion;   // null si el return no lleva valor
 
     public NodoReturn(Nodo expresion, int linea, int columna) {
         super(linea, columna);
