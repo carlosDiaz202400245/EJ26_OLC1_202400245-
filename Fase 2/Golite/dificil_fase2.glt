@@ -1,0 +1,132 @@
+/*
+ * GoLite Fase 2 (Archivo Dificil)
+ *
+ * Ejercita todo el enunciado de la Fase 2:
+ *   funciones + return, switch-case, slices (creacion, acceso, len, append,
+ *   slices.Index, strings.Join), matrices, y structs con metodos.
+ */
+
+// ─── Funciones ───────────────────────────────────────────────────────
+func factorial(n int) int {
+    if n <= 1 {
+        return 1
+    }
+    return n * factorial(n - 1)   // recursion
+}
+
+func maximo(a int, b int) int {
+    if a > b {
+        return a
+    }
+    return b
+}
+
+func esPar(n int) bool {
+    return n % 2 == 0
+}
+
+// ─── Switch ──────────────────────────────────────────────────────────
+func clasificaEdad(edad int) string {
+    switch {                       // switch sin expresion
+    case edad < 13:
+        return "nino"
+    case edad < 18:
+        return "adolescente"
+    default:
+        return "adulto"
+    }
+}
+
+func nombreDia(d int) string {
+    switch d {                     // switch con expresion y varios valores
+    case 1, 7:
+        return "fin de semana"
+    case 2, 3, 4, 5, 6:
+        return "entre semana"
+    default:
+        return "invalido"
+    }
+}
+
+// ─── Structs + metodos ───────────────────────────────────────────────
+struct Materia {
+    string nombre;
+    int nota;
+}
+
+struct Estudiante {
+    string nombre;
+    int edad;
+    Materia curso;
+}
+
+func (e Estudiante) aprobado() bool {
+    return e.curso.nota >= 61
+}
+
+func (e Estudiante) describir() string {
+    return strings.Join([]string{e.nombre, e.curso.nombre}, " - ")
+}
+
+// ─── Programa principal ──────────────────────────────────────────────
+func main() {
+    fmt.Println("=== 1. FUNCIONES Y RETURN ===")
+    fmt.Println("factorial(5) =", factorial(5))   // 120
+    fmt.Println("maximo(7, 12) =", maximo(7, 12)) // 12
+    fmt.Println("esPar(8) =", esPar(8))           // true
+
+    fmt.Println("=== 2. SWITCH-CASE ===")
+    fmt.Println(clasificaEdad(10))   // nino
+    fmt.Println(clasificaEdad(15))   // adolescente
+    fmt.Println(clasificaEdad(30))   // adulto
+    fmt.Println(nombreDia(1))        // fin de semana
+    fmt.Println(nombreDia(3))        // entre semana
+
+    fmt.Println("=== 3. SLICES ===")
+    var nums []int = []int{5, 3, 8, 1}
+    nums = append(nums, 9, 2)
+    fmt.Println("nums =", nums)            // [5 3 8 1 9 2]
+    fmt.Println("len =", len(nums))        // 6
+    nums[0] = 50
+    fmt.Println("nums[0]=50 ->", nums)     // [50 3 8 1 9 2]
+
+    suma := 0
+    for i := 0; i < len(nums); i++ {
+        suma += nums[i]
+    }
+    fmt.Println("suma =", suma)            // 73
+
+    fmt.Println("=== 4. slices.Index y strings.Join ===")
+    var palabras []string = []string{"go", "lite", "fase2"}
+    fmt.Println(strings.Join(palabras, "-"))                  // go-lite-fase2
+    fmt.Println("indice lite =", slices.Index(palabras, "lite")) // 1
+    fmt.Println("indice x =", slices.Index(palabras, "x"))       // -1
+
+    fmt.Println("=== 5. MATRICES ===")
+    var m [][]int = [][]int{{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}
+    diag := 0
+    for i := 0; i < 3; i++ {
+        diag += m[i][i]
+    }
+    fmt.Println("diagonal =", diag)        // 15
+    m[1][1] = 50
+    fmt.Println("m =", m)                  // [[1 2 3] [4 50 6] [7 8 9]]
+
+    // Matriz identidad 3x3 con make + loops
+    var ident [][]int = make([][]int, 3)
+    for i := 0; i < 3; i++ {
+        ident[i] = make([]int, 3)
+        ident[i][i] = 1
+    }
+    fmt.Println("identidad =", ident)      // [[1 0 0] [0 1 0] [0 0 1]]
+
+    fmt.Println("=== 6. STRUCTS Y METODOS ===")
+    var e Estudiante
+    e.nombre = "Ana"
+    e.edad = 20
+    e.curso.nombre = "Compiladores"
+    e.curso.nota = 75
+    fmt.Println("describir:", e.describir())   // Ana - Compiladores
+    fmt.Println("aprobado:", e.aprobado())     // true
+    fmt.Println("struct:", e)                  // {Ana 20 {Compiladores 75}}
+}

@@ -1,0 +1,23 @@
+// Prueba de la tabla de simbolos: struct, metodo, funcion, parametros y variables
+
+struct Punto {
+    int x;
+    int y;
+}
+
+func (p Punto) Suma() int {
+    return p.x + p.y
+}
+
+func doble(n int) int {
+    var r int = n * 2
+    return r
+}
+
+func main() {
+    var p Punto
+    p.x = 3
+    p.y = 4
+    var total int = p.Suma()
+    fmt.Println(doble(total))
+}

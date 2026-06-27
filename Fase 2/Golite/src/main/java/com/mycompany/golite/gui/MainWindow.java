@@ -67,10 +67,12 @@ public class MainWindow extends JFrame {
         JButton btnTokens = new JButton("Ver Tokens");
         JButton btnErrors = new JButton("Ver Errores");
         JButton btnAST    = new JButton("Ver AST");
+        JButton btnSimbolos = new JButton("Ver Simbolos");
         JButton btnClear  = new JButton("Limpiar consola");
         reportPanel.add(btnTokens);
         reportPanel.add(btnErrors);
         reportPanel.add(btnAST);
+        reportPanel.add(btnSimbolos);
         reportPanel.add(btnClear);
 
         bottomPanel.add(reportPanel, BorderLayout.NORTH);
@@ -98,6 +100,7 @@ public class MainWindow extends JFrame {
         btnTokens.addActionListener(e -> accionVerTokens());
         btnErrors.addActionListener(e -> accionVerErrores());
         btnAST.addActionListener(e -> accionVerAST());
+        btnSimbolos.addActionListener(e -> accionVerSimbolos());
         btnClear.addActionListener(e -> consolePanel.clear());
     }
 
@@ -361,6 +364,28 @@ public class MainWindow extends JFrame {
             GoliteLexer.registrar = true;
         }
     }
+    // Tabla de simbolos en consola
+    private void accionVerSimbolos() {
+        List<com.mycompany.golite.ast.Nodo> ast = parsearAST();
+        if (ast == null) {
+            consolePanel.println("No se pudo generar la tabla (editor vacio o sin arbol).");
+            return;
+        }
+        List<String[]> filas = new com.mycompany.golite.ast.TablaSimbolos().generar(ast);
+        consolePanel.clear();
+        consolePanel.println("=== TABLA DE SIMBOLOS ===\n");
+        consolePanel.println(String.format("%-4s %-15s %-11s %-12s %-15s %-6s %-4s",
+                "No.", "Nombre", "Rol", "Tipo", "Ambito", "Linea", "Col"));
+        consolePanel.println("-".repeat(75));
+        int i = 1;
+        for (String[] f : filas) {
+            consolePanel.println(String.format("%-4d %-15s %-11s %-12s %-15s %-6s %-4s",
+                    i++, f[0], f[1], f[2], f[3], f[4], f[5]));
+        }
+        consolePanel.println("-".repeat(75));
+        consolePanel.println("Total: " + filas.size() + " simbolos.");
+    }
+
     // Abre un archivo con la app del sistema, con fallback a Windows
     private void abrirArchivo(File archivo) {
         try {
